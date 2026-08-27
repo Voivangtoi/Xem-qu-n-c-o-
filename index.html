@@ -51,7 +51,7 @@
     .ad-rate { font-size: 12px; color: #00e6b8; font-weight: 700; margin-top: 4px; }
     
     .btn-watch { background: #0088cc; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
-    .btn-watch:active { opacity: 0.8; }
+    .btn-watch:disabled { background: #2a394a; color: #64748b; cursor: not-allowed; }
 
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
     .modal-content { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; text-align: center; }
@@ -149,7 +149,7 @@
         <div class="ad-logo logo-monetag">monetag</div>
         <div class="ad-details">
           <div class="ad-name">Monetag</div>
-          <div class="ad-desc" id="txt-monetag-desc">High-yield multi-format video ads</div>
+          <div class="ad-desc" id="txt-monetag-desc">Xem 2 QC liên tục (Hồi 15 phút)</div>
           <div class="ad-rate">+0.0004 💎 / view</div>
         </div>
       </div>
@@ -166,111 +166,40 @@
   </div>
 
   <script>
-    // --- 1. DỊCH ĐA NGÔN NGỮ (VI, EN, PH, RU) ---
+    // --- 1. DỊCH ĐA NGÔN NGỮ ---
     const i18n = {
       vi: {
-        userId: "ID Người xem",
-        withdrawBtn: "⇄ Rút về USDT (BEP20)",
-        withdrawTitle: "Rút USDT (BEP20)",
-        withdrawMin: "Tối thiểu: 0.5 USDT",
-        enterWallet: "Nhập địa chỉ ví USDT (BEP20):",
-        cancel: "Hủy",
-        confirm: "Gửi Yêu Cầu",
-        statViews: "ĐÃ XEM",
-        unitViews: "Lượt xem",
-        statSpeed: "TĂNG TỐC",
-        speedVal: "1.00x Cơ bản",
-        levelProgress: "Tiến trình cấp độ",
-        networkTitle: "📚 Mạng Quảng Cáo",
-        adsgramDesc: "Quảng cáo video Telegram chính thức",
-        monetagDesc: "Quảng cáo video đa định dạng",
-        watchBtn: "► Xem",
-        loadingBtn: "► Đang tải...",
-        retryBtn: "► Thử lại",
-        navTask: "Nhiệm Vụ", navFriends: "Bạn Bè", navContest: "Cuộc Thi", navProfile: "Cá Nhân",
-        errNotWatchedFully: "Bạn chưa xem hết quảng cáo hoặc chưa bấm vào link ở lại 7 giây! Không thể cộng thưởng.",
+        userId: "ID Người xem", withdrawBtn: "⇄ Rút về USDT (BEP20)", withdrawTitle: "Rút USDT (BEP20)", withdrawMin: "Tối thiểu: 0.5 USDT", enterWallet: "Nhập địa chỉ ví USDT (BEP20):", cancel: "Hủy", confirm: "Gửi Yêu Cầu", statViews: "ĐÃ XEM", unitViews: "Lượt xem", statSpeed: "TĂNG TỐC", speedVal: "1.00x Cơ bản", levelProgress: "Tiến trình cấp độ", networkTitle: "📚 Mạng Quảng Cáo", adsgramDesc: "Quảng cáo video Telegram chính thức", monetagDesc: "Xem 2 QC liên tục (Hồi 15 phút)", watchBtn: "► Xem", loadingBtn: "► Đang tải...", retryBtn: "► Thử lại", navTask: "Nhiệm Vụ", navFriends: "Bạn Bè", navContest: "Cuộc Thi", navProfile: "Cá Nhân",
+        errAdsgram7s: "Bạn chưa click link quảng cáo đủ 7 giây!",
+        errMonetagIncomplete: "Bạn chưa xem đủ 2 quảng cáo Monetag!",
+        adsgramNextStep: "Đã xác nhận click 7s! Chuẩn bị xem tiếp quảng cáo 15s...",
+        adsgramDeclined: "Tài khoản Adsgram đang bị tạm khóa (Declined). Vui lòng thử lại sau!",
         successReward: "Thành công! Đã cộng +{amount} 💎 cho ID: {id}",
-        minWithdrawErr: "Số dư chưa đủ! Cần tối thiểu 0.5 USDT (BEP20).",
-        inputWalletErr: "Vui lòng nhập địa chỉ ví USDT!",
-        withdrawSuccess: "Đã gửi yêu cầu rút tiền thành công!"
+        minWithdrawErr: "Số dư chưa đủ! Cần tối thiểu 0.5 USDT (BEP20).", inputWalletErr: "Vui lòng nhập địa chỉ ví USDT!", withdrawSuccess: "Đã gửi yêu cầu rút tiền thành công!"
       },
       en: {
-        userId: "Viewer ID",
-        withdrawBtn: "⇄ Withdraw USDT (BEP20)",
-        withdrawTitle: "Withdraw USDT (BEP20)",
-        withdrawMin: "Minimum: 0.5 USDT",
-        enterWallet: "Enter USDT Address (BEP20):",
-        cancel: "Cancel",
-        confirm: "Submit Request",
-        statViews: "WATCHED",
-        unitViews: "Views",
-        statSpeed: "BOOST",
-        speedVal: "1.00x Base",
-        levelProgress: "Level Progress",
-        networkTitle: "📚 Ad Networks",
-        adsgramDesc: "Official Telegram rewarded video ads",
-        monetagDesc: "High-yield multi-format video ads",
-        watchBtn: "► Watch",
-        loadingBtn: "► Loading...",
-        retryBtn: "► Retry",
-        navTask: "Tasks", navFriends: "Friends", navContest: "Contest", navProfile: "Profile",
-        errNotWatchedFully: "You haven't watched the ad completely or haven't clicked the link and stayed 7 seconds!",
-        successReward: "Success! Added +{amount} 💎 for ID: {id}",
-        minWithdrawErr: "Insufficient balance! Minimum 0.5 USDT required.",
-        inputWalletErr: "Please enter your USDT wallet address!",
-        withdrawSuccess: "Withdrawal request submitted successfully!"
+        userId: "Viewer ID", withdrawBtn: "⇄ Withdraw USDT (BEP20)", withdrawTitle: "Withdraw USDT (BEP20)", withdrawMin: "Minimum: 0.5 USDT", enterWallet: "Enter USDT Address (BEP20):", cancel: "Cancel", confirm: "Submit Request", statViews: "WATCHED", unitViews: "Views", statSpeed: "BOOST", speedVal: "1.00x Base", levelProgress: "Level Progress", networkTitle: "📚 Ad Networks", adsgramDesc: "Official Telegram rewarded video ads", monetagDesc: "Watch 2 ads in a row (15m cooldown)", watchBtn: "► Watch", loadingBtn: "► Loading...", retryBtn: "► Retry", navTask: "Tasks", navFriends: "Friends", navContest: "Contest", navProfile: "Profile",
+        errAdsgram7s: "You haven't stayed on the ad link for 7 seconds!",
+        errMonetagIncomplete: "You didn't complete watching both Monetag ads!",
+        adsgramNextStep: "7s click verified! Loading next 15s video...",
+        adsgramDeclined: "Adsgram account is currently declined. Please try again later!",
+        successReward: "Success! Added +{amount} 💎 for ID: {id}", minWithdrawErr: "Insufficient balance! Minimum 0.5 USDT required.", inputWalletErr: "Please enter your USDT wallet address!", withdrawSuccess: "Withdrawal request submitted successfully!"
       },
       ph: {
-        userId: "ID ng Manonood",
-        withdrawBtn: "⇄ Mag-withdraw sa USDT (BEP20)",
-        withdrawTitle: "Mag-withdraw ng USDT (BEP20)",
-        withdrawMin: "Minimum: 0.5 USDT",
-        enterWallet: "Ilagay ang USDT Address (BEP20):",
-        cancel: "Kanselahin",
-        confirm: "Ipadala ang Hiling",
-        statViews: "NANOOD NA",
-        unitViews: "Mga Panonood",
-        statSpeed: "PABILIS",
-        speedVal: "1.00x Base",
-        levelProgress: "Progresyon ng Antas",
-        networkTitle: "📚 Mga Network ng Ad",
-        adsgramDesc: "Opisyal na rewarded video ads ng Telegram",
-        monetagDesc: "Multi-format na video ads na mataas ang kita",
-        watchBtn: "► Manood",
-        loadingBtn: "► Naglo-load...",
-        retryBtn: "► Subukan Ulit",
-        navTask: "Mga Gawain", navFriends: "Mga Kaibigan", navContest: "Paligsahan", navProfile: "Profile",
-        errNotWatchedFully: "Hindi mo napanood nang buo ang ad o hindi mo na-click ang link at nag-stay ng 7 segundo!",
-        successReward: "Tagumpay! Naidagdag ang +{amount} 💎 para sa ID: {id}",
-        minWithdrawErr: "Kulang ang balanse! Kailangan ng minimum na 0.5 USDT.",
-        inputWalletErr: "Mangyaring ilagay ang iyong USDT wallet address!",
-        withdrawSuccess: "Matagumpay na naisumite ang kahilingan sa pag-withdraw!"
+        userId: "ID ng Manonood", withdrawBtn: "⇄ Mag-withdraw sa USDT (BEP20)", withdrawTitle: "Mag-withdraw ng USDT (BEP20)", withdrawMin: "Minimum: 0.5 USDT", enterWallet: "Ilagay ang USDT Address (BEP20):", cancel: "Kanselahin", confirm: "Ipadala ang Hiling", statViews: "NANOOD NA", unitViews: "Mga Panonood", statSpeed: "PABILIS", speedVal: "1.00x Base", levelProgress: "Progresyon ng Antas", networkTitle: "📚 Mga Network ng Ad", adsgramDesc: "Opisyal na rewarded video ads ng Telegram", monetagDesc: "Manood ng 2 ad (15m cooldown)", watchBtn: "► Manood", loadingBtn: "► Naglo-load...", retryBtn: "► Subukan Ulit", navTask: "Mga Gawain", navFriends: "Mga Kaibigan", navContest: "Paligsahan", navProfile: "Profile",
+        errAdsgram7s: "Hindi ka nag-stay ng 7 segundo sa ad link!",
+        errMonetagIncomplete: "Hindi mo napanood nang buo ang 2 Monetag ads!",
+        adsgramNextStep: "Verified na ang 7s click! Inihahanda ang kasunod na 15s video...",
+        adsgramDeclined: "Naka-decline ang Adsgram account ngayon.",
+        successReward: "Tagumpay! Naidagdag ang +{amount} 💎 para sa ID: {id}", minWithdrawErr: "Kulang ang balanse! Kailangan ng minimum na 0.5 USDT.", inputWalletErr: "Mangyaring ilagay ang iyong USDT wallet address!", withdrawSuccess: "Matagumpay na naisumite ang kahilingan sa pag-withdraw!"
       },
       ru: {
-        userId: "ID Зрителя",
-        withdrawBtn: "⇄ Вывести USDT (BEP20)",
-        withdrawTitle: "Вывод USDT (BEP20)",
-        withdrawMin: "Минимум: 0.5 USDT",
-        enterWallet: "Введите адрес USDT (BEP20):",
-        cancel: "Отмена",
-        confirm: "Отправить запрос",
-        statViews: "ПРОСМОТРЕНО",
-        unitViews: "Просмотры",
-        statSpeed: "УСКОРЕНИЕ",
-        speedVal: "1.00x Базовый",
-        levelProgress: "Прогресс уровня",
-        networkTitle: "📚 Рекламные сети",
-        adsgramDesc: "Официальная видеореклама Telegram",
-        monetagDesc: "Высокодоходная видеореклама",
-        watchBtn: "► Смотреть",
-        loadingBtn: "► Загрузка...",
-        retryBtn: "► Повторить",
-        navTask: "Задания", navFriends: "Друзья", navContest: "Конкурс", navProfile: "Профиль",
-        errNotWatchedFully: "Вы не досмотрели рекламу до конца или не перешли по ссылке на 7 секунд!",
-        successReward: "Успешно! Добавлено +{amount} 💎 для ID: {id}",
-        minWithdrawErr: "Недостаточно средств! Требуется минимум 0.5 USDT.",
-        inputWalletErr: "Пожалуйста, введите адрес вашего USDT кошелька!",
-        withdrawSuccess: "Запрос на вывод успешно отправлен!"
+        userId: "ID Зрителя", withdrawBtn: "⇄ Вывести USDT (BEP20)", withdrawTitle: "Вывод USDT (BEP20)", withdrawMin: "Минимум: 0.5 USDT", enterWallet: "Введите адрес USDT (BEP20):", cancel: "Отмена", confirm: "Отправить запрос", statViews: "ПРОСМОТРЕНО", unitViews: "Просмотры", statSpeed: "УСКОРЕНИЕ", speedVal: "1.00x Базовый", levelProgress: "Прогресс уровня", networkTitle: "📚 Рекламные сети", adsgramDesc: "Официальная видеореклама Telegram", monetagDesc: "Смотреть 2 рекламы (Кулдаун 15м)", watchBtn: "► Смотреть", loadingBtn: "► Загрузка...", retryBtn: "► Повторить", navTask: "Задания", navFriends: "Друзья", navContest: "Конкурс", navProfile: "Профиль",
+        errAdsgram7s: "Вы не пробыли по ссылке 7 секунд!",
+        errMonetagIncomplete: "Вы không досмотрели 2 рекламы Monetag!",
+        adsgramNextStep: "Переход 7s подтвержден! Загрузка следующего 15s видео...",
+        adsgramDeclined: "Аккаунт Adsgram отклонен.",
+        successReward: "Успешно! Добавлено +{amount} 💎 для ID: {id}", minWithdrawErr: "Недостаточно средств! Требуется минимум 0.5 USDT.", inputWalletErr: "Пожалуйста, введите адрес вашего USDT кошелька!", withdrawSuccess: "Запрос на вывод успешно отправлен!"
       }
     };
 
@@ -301,8 +230,10 @@
       document.getElementById('btn-watch-adsgram').innerText = t.watchBtn;
       
       let monetagBtn = document.getElementById('btn-monetag');
-      if (isMonetagReady) monetagBtn.innerText = t.watchBtn;
-      else monetagBtn.innerText = t.loadingBtn;
+      if (!monetagBtn.disabled) {
+        if (isMonetagReady) monetagBtn.innerText = t.watchBtn;
+        else monetagBtn.innerText = t.loadingBtn;
+      }
 
       document.getElementById('nav-task').innerText = t.navTask;
       document.getElementById('nav-friends').innerText = t.navFriends;
@@ -331,9 +262,10 @@
       changeLanguage(currentLang);
       updateUI();
       preloadMonetag();
+      checkMonetagCooldown();
     });
 
-    // --- 3. ĐO THỜI GIAN CLICK LINK QUẢNG CÁO (TỐI THIỂU 7 GIÂY) ---
+    // --- 3. THEO DÕI CLICK 7 GIÂY (DÀNH CHO ADSGRAM) ---
     let adClickTime = 0;
     let userHasClickedAd = false;
 
@@ -349,68 +281,115 @@
       return duration >= 7; 
     }
 
-    // --- 4. MONETAG (YÊU CẦU XEM HẾT + CLICK LINK 7S) ---
+    // --- 4. LOGIC MONETAG (XEM 2 QC LIÊN TỤC ➔ NGHỈ 15 PHÚT) ---
     let isMonetagReady = false;
     function preloadMonetag() {
       if (typeof show_11643689 === 'function') {
         show_11643689({ type: 'preload', ymid: userId }).then(() => {
           isMonetagReady = true;
-          document.getElementById('btn-monetag').innerText = i18n[currentLang].watchBtn;
+          let btn = document.getElementById('btn-monetag');
+          if (!btn.disabled) btn.innerText = i18n[currentLang].watchBtn;
         }).catch(() => {
           isMonetagReady = false;
-          document.getElementById('btn-monetag').innerText = i18n[currentLang].retryBtn;
+          let btn = document.getElementById('btn-monetag');
+          if (!btn.disabled) btn.innerText = i18n[currentLang].retryBtn;
         });
       } else {
         setTimeout(preloadMonetag, 1000);
       }
     }
 
+    function checkMonetagCooldown() {
+      let lastTime = localStorage.getItem(`monetag_cd_${userId}`);
+      if (lastTime) {
+        let diff = Date.now() - parseInt(lastTime);
+        let remaining = (15 * 60 * 1000) - diff;
+        if (remaining > 0) {
+          startMonetagTimer(remaining);
+        }
+      }
+    }
+
+    function startMonetagTimer(durationMs) {
+      let btn = document.getElementById('btn-monetag');
+      btn.disabled = true;
+      let endTime = Date.now() + durationMs;
+
+      let timer = setInterval(() => {
+        let left = Math.ceil((endTime - Date.now()) / 1000);
+        if (left <= 0) {
+          clearInterval(timer);
+          btn.disabled = false;
+          btn.innerText = i18n[currentLang].watchBtn;
+          localStorage.removeItem(`monetag_cd_${userId}`);
+        } else {
+          let m = Math.floor(left / 60);
+          let s = left % 60;
+          btn.innerText = `⏳ ${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+      }, 1000);
+    }
+
     function watchMonetagAd() {
       if (typeof show_11643689 !== 'function') return;
-      userHasClickedAd = false;
 
-      // Hàm show_11643689 chỉ kích hoạt .then() khi người dùng ĐÃ XEM HẾT quảng cáo
+      // QC 1
       show_11643689({ ymid: userId }).then(() => {
-        // Kiểm tra điều kiện phụ: Bắt buộc đã click chuyển link ở lại tối thiểu 7s
+        // Sau khi xem xong QC 1 ➔ Tự động gọi tiếp QC 2
         setTimeout(() => {
-          if (verifyClickDuration()) {
+          show_11643689({ ymid: userId }).then(() => {
+            // Xem hoàn tất 2 QC Monetag
             congThuong(0.0004);
             let msg = i18n[currentLang].successReward.replace('{amount}', '0.0004').replace('{id}', userId);
             alert(msg);
-          } else {
-            alert(i18n[currentLang].errNotWatchedFully);
-          }
-          preloadMonetag();
-        }, 500);
-      }).catch((err) => {
-        // Nếu tắt quảng cáo giữa chừng hoặc bỏ qua -> Nhảy vào catch
-        alert(i18n[currentLang].errNotWatchedFully);
+            
+            // Khóa nút 15 phút
+            localStorage.setItem(`monetag_cd_${userId}`, Date.now().toString());
+            startMonetagTimer(15 * 60 * 1000);
+          }).catch(() => {
+            alert(i18n[currentLang].errMonetagIncomplete);
+            preloadMonetag();
+          });
+        }, 1000);
+      }).catch(() => {
+        alert(i18n[currentLang].errMonetagIncomplete);
         preloadMonetag();
       });
     }
 
-    // --- 5. ADSGRAM (YÊU CẦU XEM HẾT + CLICK LINK 7S) ---
+    // --- 5. LOGIC ADSGRAM (CLICK 7S ➔ XEM TIẾP QC 15S) ---
     let adsgram = null;
     function watchAdsgramAd() {
+      // SỬA LỖI: Adsgram blockId bắt buộc là chuỗi ID số chuẩn từ dashboard Partner Adsgram
+      // Nếu bot của bạn trên Adsgram chưa được duyệt (vẫn bị Declined), nó sẽ tự phát hiện và thông báo lỗi.
       if (!adsgram && window.Adsgram) {
-        adsgram = window.Adsgram.init({ blockId: "bot-44816" });
+        adsgram = window.Adsgram.init({ blockId: "42178" }); // Thay bằng Block ID từ Adsgram dashboard
       }
       if (!adsgram) return;
       
       userHasClickedAd = false;
 
       adsgram.show().then(() => {
+        // QC 1 đã đóng, kiểm tra xem người dùng có bấm link và giữ 7s không
         setTimeout(() => {
           if (verifyClickDuration()) {
-            congThuong(0.0006);
-            let msg = i18n[currentLang].successReward.replace('{amount}', '0.0006').replace('{id}', userId);
-            alert(msg);
+            alert(i18n[currentLang].adsgramNextStep);
+            // Tự động xem tiếp 1 QC 15s nữa
+            setTimeout(() => {
+              adsgram.show().then(() => {
+                congThuong(0.0006);
+                let msg = i18n[currentLang].successReward.replace('{amount}', '0.0006').replace('{id}', userId);
+                alert(msg);
+              }).catch(() => {
+                alert(i18n[currentLang].errAdsgram7s);
+              });
+            }, 500);
           } else {
-            alert(i18n[currentLang].errNotWatchedFully);
+            alert(i18n[currentLang].errAdsgram7s);
           }
         }, 500);
       }).catch((err) => {
-        alert(i18n[currentLang].errNotWatchedFully);
+        alert(i18n[currentLang].adsgramDeclined);
       });
     }
 
