@@ -12,7 +12,7 @@
   <script src='//libtl.com/sdk.js' data-zone='11643689' data-sdk='show_11643689'></script>
 
   <!-- SDK Adsgram -->
-<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
@@ -83,7 +83,7 @@
     .btn-cancel { background: #1a273e; color: #8a99ad; }
 
     /* Navigation Bar */
-    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0d1424; border-top: 1px solid #1e2d4a; display: flex; justify-space-around; padding: 8px 0; }
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0d1424; border-top: 1px solid #1e2d4a; display: flex; justify-content: space-around; padding: 8px 0; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 10px; gap: 4px; }
     .nav-item.active { color: #0088cc; }
     .nav-icon { font-size: 18px; }
@@ -174,7 +174,7 @@
           <div class="ad-rate">+0.0006 💎 / view</div>
         </div>
       </div>
-      <button class="btn-watch" onclick="alert('Adsgram yêu cầu Block ID riêng!')">► Xem</button>
+      <button class="btn-watch" onclick="watchAdsgramAd()">► Xem</button>
     </div>
     <div class="limit-text"><span>Giới Hạn Ngày</span><span>0 / 100 (0%)</span></div>
     <div class="progress-bar"><div class="progress-fill"></div></div>
@@ -292,26 +292,35 @@
         });
       } else {
         alert("Quảng cáo Monetag đang nạp, vui lòng bấm lại sau 3 giây!");
-   // Khởi tạo Adsgram với Block ID của bạn
-const adsgram = window.Adsgram ? window.Adsgram.init({ blockId: "bot-44816" }) : null;
+      }
+    }
 
-// Hàm xử lý xem quảng cáo Adsgram
-function watchAdsgramAd() {
-  if (!adsgram) {
-    alert("Adsgram chưa sẵn sàng, vui lòng thử lại sau!");
-    return;
-  }
-  adsgram.show().then(() => {
-    currentBalance += 0.0006;
-    currentViews += 1;
-    document.getElementById('user-balance').innerText = currentBalance.toFixed(4);
-    alert("Thành công! Bạn được cộng +0.0006 USDT");
-  }).catch((err) => {
-    alert("Quảng cáo bị bỏ dở hoặc chưa tải xong!");
-  });
-}
+    // Khởi tạo Adsgram với Block ID bot-44816
+    const adsgram = window.Adsgram ? window.Adsgram.init({ blockId: "bot-44816" }) : null;
+
+    // Xử lý xem quảng cáo Adsgram
+    function watchAdsgramAd() {
+      if (!adsgram) {
+        alert("Adsgram chưa sẵn sàng, vui lòng thử lại sau!");
+        return;
+      }
+      adsgram.show().then(() => {
+        currentBalance += 0.0006;
+        currentViews += 1;
         
+        document.getElementById('user-balance').innerText = currentBalance.toFixed(4);
+        document.getElementById('weekly-views').innerText = currentViews;
+        document.getElementById('level-views').innerText = currentViews;
+        document.getElementById('pool-views').innerText = currentViews;
+        
+        document.getElementById('level-progress').style.width = Math.min((currentViews / 50) * 100, 100) + '%';
+        document.getElementById('pool-progress').style.width = Math.min((currentViews / 330) * 100, 100) + '%';
+
+        alert("Thành công! Bạn được cộng +0.0006 💎");
+      }).catch((err) => {
+        alert("Quảng cáo bị bỏ dở hoặc chưa tải xong!");
+      });
+    }
   </script>
 </body>
 </html>
-
