@@ -5,23 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>PaidZ Mini App</title>
   
-  <!-- Thẻ xác minh Monetag -->
   <meta name="monetag" content="3108df7f481afc51a165ab7a20f266dc">
-
-  <!-- 1. SDK Telegram WebApp (Bắt buộc theo hướng dẫn của Monetag) -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
-  <!-- 2. SDK Monetag Zone Chính -->
   <script src='//libtl.com/sdk.js' data-zone='11643689' data-sdk='show_11643689'></script>
-
-  <!-- 3. SDK Adsgram -->
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
     body { background-color: #0b101d; color: #ffffff; display: flex; flex-direction: column; min-height: 100vh; padding: 16px; padding-bottom: 80px; }
     
-    .balance-container { text-align: center; margin-top: 10px; margin-bottom: 16px; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .user-info { font-size: 13px; color: #8a99ad; }
+    .lang-select { background: #131c2e; color: #00e6b8; border: 1px solid #1e2d4a; border-radius: 8px; padding: 4px 8px; font-size: 12px; font-weight: bold; outline: none; }
+
+    .balance-container { text-align: center; margin-top: 6px; margin-bottom: 16px; }
     .balance-val { font-size: 42px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; }
     .token-icon { width: 32px; height: 32px; background: #00b49d; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
     
@@ -35,20 +32,9 @@
 
     .level-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 12px; margin-bottom: 16px; }
     .level-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: #8a99ad; }
-    .level-tag { background: #1c3238; color: #00e6b8; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px; }
     
     .progress-bar { background: #1a273e; height: 6px; border-radius: 3px; overflow: hidden; }
     .progress-fill { background: #00e6b8; height: 100%; width: 0%; }
-
-    .pool-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 14px; margin-bottom: 20px; }
-    .pool-info { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .pool-icon { width: 36px; height: 36px; background: #383217; color: #ffcc00; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-    .pool-text { flex: 1; }
-    .pool-title { font-size: 14px; font-weight: 700; }
-    .pool-sub { font-size: 12px; color: #8a99ad; }
-    .pool-max { text-align: right; font-size: 11px; color: #8a99ad; }
-    .pool-reward { text-align: right; font-size: 14px; font-weight: 700; color: #00e6b8; }
-    .timer { font-size: 11px; color: #8a99ad; margin-top: 10px; display: flex; justify-content: space-between; }
 
     .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .ad-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
@@ -65,7 +51,6 @@
     .ad-rate { font-size: 12px; color: #00e6b8; font-weight: 700; margin-top: 4px; }
     
     .btn-watch { background: #0088cc; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
-    .btn-watch:disabled { background: #3a4b68; color: #8a99ad; cursor: not-allowed; }
     .btn-watch:active { opacity: 0.8; }
 
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
@@ -81,27 +66,36 @@
     .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0d1424; border-top: 1px solid #1e2d4a; display: flex; justify-content: space-around; padding: 8px 0; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 10px; gap: 4px; }
     .nav-item.active { color: #0088cc; }
-    .nav-icon { font-size: 18px; }
     .paidz-btn { width: 44px; height: 44px; background: #0088cc; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; margin-top: -15px; border: 3px solid #0b101d; box-shadow: 0 0 10px rgba(0,136,204,0.5); }
   </style>
 </head>
 <body>
 
+  <div class="header-bar">
+    <div class="user-info"><span id="txt-user-id">ID Người xem</span>: <span id="display-user-id" style="color:#00e6b8; font-weight:bold;">Loading...</span></div>
+    <select class="lang-select" id="lang-select" onchange="changeLanguage(this.value)">
+      <option value="vi">🌐 Tiếng Việt</option>
+      <option value="en">🌐 English</option>
+      <option value="ph">🌐 Tagalog (PH)</option>
+      <option value="ru">🌐 Русский</option>
+    </select>
+  </div>
+
   <div class="balance-container">
     <div class="balance-val"><span id="user-balance">0.0000</span> <div class="token-icon">💎</div></div>
   </div>
 
-  <button class="btn-withdraw" onclick="openWithdrawModal()">⇄ Rút về USDT (BEP20)</button>
+  <button class="btn-withdraw" id="btn-withdraw" onclick="openWithdrawModal()">⇄ Rút về USDT (BEP20)</button>
 
   <div class="modal" id="withdrawModal">
     <div class="modal-content">
-      <div class="modal-title">Rút USDT (BEP20)</div>
-      <div class="modal-subtitle">Tối thiểu: 0.5 USDT</div>
-      <p style="font-size: 12px; color: #8a99ad; margin-bottom: 8px; text-align: left;">Nhập địa chỉ ví USDT (BEP20):</p>
+      <div class="modal-title" id="txt-withdraw-title">Rút USDT (BEP20)</div>
+      <div class="modal-subtitle" id="txt-withdraw-min">Tối thiểu: 0.5 USDT</div>
+      <p style="font-size: 12px; color: #8a99ad; margin-bottom: 8px; text-align: left;" id="txt-enter-wallet">Nhập địa chỉ ví USDT (BEP20):</p>
       <input type="text" class="modal-input" id="usdtWallet" placeholder="0x...">
       <div class="modal-btns">
-        <button class="modal-btn btn-cancel" onclick="closeWithdrawModal()">Hủy</button>
-        <button class="modal-btn btn-confirm" onclick="submitWithdraw()">Gửi Yêu Cầu</button>
+        <button class="modal-btn btn-cancel" id="btn-cancel" onclick="closeWithdrawModal()">Hủy</button>
+        <button class="modal-btn btn-confirm" id="btn-confirm" onclick="submitWithdraw()">Gửi Yêu Cầu</button>
       </div>
     </div>
   </div>
@@ -109,15 +103,15 @@
   <div class="stats-grid">
     <div class="stat-card">
       <div>
-        <div class="stat-title">THIS WEEK</div>
-        <div class="stat-val"><span id="weekly-views">0</span> Lượt xem</div>
+        <div class="stat-title" id="txt-stat-views">ĐÃ XEM</div>
+        <div class="stat-val"><span id="weekly-views">0</span> <span id="txt-unit-views">Lượt xem</span></div>
       </div>
       <div class="stat-icon">📺</div>
     </div>
     <div class="stat-card">
       <div>
-        <div class="stat-title">TĂNG TỐC QUẢN...</div>
-        <div class="stat-val" style="color:#00e6b8">1.00x Cơ bản</div>
+        <div class="stat-title" id="txt-stat-speed">TĂNG TỐC</div>
+        <div class="stat-val" style="color:#00e6b8" id="txt-speed-val">1.00x Cơ bản</div>
       </div>
       <div class="stat-icon" style="color:#00e6b8">🔥</div>
     </div>
@@ -125,32 +119,13 @@
 
   <div class="level-card">
     <div class="level-header">
-      <span>Cấp Tiếp Theo: Bạc <span class="level-tag">+5% Tăng Tốc</span></span>
-      <span><span id="level-views">0</span> / 50 lượt xem</span>
+      <span id="txt-level-progress">Tiến trình cấp độ</span>
+      <span><span id="level-views">0</span> / 50 <span id="txt-unit-views2">lượt xem</span></span>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="level-progress"></div></div>
   </div>
 
-  <div class="pool-card">
-    <div class="pool-info">
-      <div class="pool-icon">🪙</div>
-      <div class="pool-text">
-        <div class="pool-title">Quỹ Thưởng Hàng Ngày</div>
-        <div class="pool-sub"><span id="pool-views">0</span> / 330 Quảng Cáo Đã Xem</div>
-      </div>
-      <div>
-        <div class="pool-max">Tối Đa Ngày</div>
-        <div class="pool-reward">~0.144 💎</div>
-      </div>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" id="pool-progress"></div></div>
-    <div class="timer">
-      <span>⏰ Đặt lại hàng ngày sau</span>
-      <span style="background:#1a273e; padding:2px 6px; border-radius:4px; font-weight:bold;">13:32:11</span>
-    </div>
-  </div>
-
-  <div class="section-title">📚 Mạng Quảng Cáo</div>
+  <div class="section-title" id="txt-network-title">📚 Mạng Quảng Cáo</div>
 
   <!-- Adsgram -->
   <div class="ad-card">
@@ -159,11 +134,11 @@
         <div class="ad-logo logo-adsgram">A</div>
         <div class="ad-details">
           <div class="ad-name">Adsgram <span class="badge-yield">Top Yield</span></div>
-          <div class="ad-desc">Official Telegram rewarded video ads</div>
+          <div class="ad-desc" id="txt-adsgram-desc">Official Telegram rewarded video ads</div>
           <div class="ad-rate">+0.0006 💎 / view</div>
         </div>
       </div>
-      <button class="btn-watch" onclick="watchAdsgramAd()">► Xem</button>
+      <button class="btn-watch" id="btn-watch-adsgram" onclick="watchAdsgramAd()">► Xem</button>
     </div>
   </div>
 
@@ -174,7 +149,7 @@
         <div class="ad-logo logo-monetag">monetag</div>
         <div class="ad-details">
           <div class="ad-name">Monetag</div>
-          <div class="ad-desc">High-yield multi-format video ads</div>
+          <div class="ad-desc" id="txt-monetag-desc">High-yield multi-format video ads</div>
           <div class="ad-rate">+0.0004 💎 / view</div>
         </div>
       </div>
@@ -183,15 +158,159 @@
   </div>
 
   <div class="nav-bar">
-    <div class="nav-item"><div class="nav-icon">📊</div>Nhiệm Vụ</div>
-    <div class="nav-item"><div class="nav-icon">👥</div>Bạn Bè</div>
+    <div class="nav-item"><div class="nav-icon">📊</div><span id="nav-task">Nhiệm Vụ</span></div>
+    <div class="nav-item"><div class="nav-icon">👥</div><span id="nav-friends">Bạn Bè</span></div>
     <div class="nav-item active"><div class="paidz-btn">P</div>PaidZ</div>
-    <div class="nav-item"><div class="nav-icon">🏆</div>Cuộc Thi</div>
-    <div class="nav-item"><div class="nav-icon">👤</div>Cá Nhân</div>
+    <div class="nav-item"><div class="nav-icon">🏆</div><span id="nav-contest">Cuộc Thi</span></div>
+    <div class="nav-item"><div class="nav-icon">👤</div><span id="nav-profile">Cá Nhân</span></div>
   </div>
 
   <script>
-    // 1. Sẵn sàng SDK Telegram
+    // --- 1. DỊCH ĐA NGÔN NGỮ (VI, EN, PH, RU) ---
+    const i18n = {
+      vi: {
+        userId: "ID Người xem",
+        withdrawBtn: "⇄ Rút về USDT (BEP20)",
+        withdrawTitle: "Rút USDT (BEP20)",
+        withdrawMin: "Tối thiểu: 0.5 USDT",
+        enterWallet: "Nhập địa chỉ ví USDT (BEP20):",
+        cancel: "Hủy",
+        confirm: "Gửi Yêu Cầu",
+        statViews: "ĐÃ XEM",
+        unitViews: "Lượt xem",
+        statSpeed: "TĂNG TỐC",
+        speedVal: "1.00x Cơ bản",
+        levelProgress: "Tiến trình cấp độ",
+        networkTitle: "📚 Mạng Quảng Cáo",
+        adsgramDesc: "Quảng cáo video Telegram chính thức",
+        monetagDesc: "Quảng cáo video đa định dạng",
+        watchBtn: "► Xem",
+        loadingBtn: "► Đang tải...",
+        retryBtn: "► Thử lại",
+        navTask: "Nhiệm Vụ", navFriends: "Bạn Bè", navContest: "Cuộc Thi", navProfile: "Cá Nhân",
+        errNotWatchedFully: "Bạn chưa xem hết quảng cáo hoặc chưa bấm vào link ở lại 7 giây! Không thể cộng thưởng.",
+        successReward: "Thành công! Đã cộng +{amount} 💎 cho ID: {id}",
+        minWithdrawErr: "Số dư chưa đủ! Cần tối thiểu 0.5 USDT (BEP20).",
+        inputWalletErr: "Vui lòng nhập địa chỉ ví USDT!",
+        withdrawSuccess: "Đã gửi yêu cầu rút tiền thành công!"
+      },
+      en: {
+        userId: "Viewer ID",
+        withdrawBtn: "⇄ Withdraw USDT (BEP20)",
+        withdrawTitle: "Withdraw USDT (BEP20)",
+        withdrawMin: "Minimum: 0.5 USDT",
+        enterWallet: "Enter USDT Address (BEP20):",
+        cancel: "Cancel",
+        confirm: "Submit Request",
+        statViews: "WATCHED",
+        unitViews: "Views",
+        statSpeed: "BOOST",
+        speedVal: "1.00x Base",
+        levelProgress: "Level Progress",
+        networkTitle: "📚 Ad Networks",
+        adsgramDesc: "Official Telegram rewarded video ads",
+        monetagDesc: "High-yield multi-format video ads",
+        watchBtn: "► Watch",
+        loadingBtn: "► Loading...",
+        retryBtn: "► Retry",
+        navTask: "Tasks", navFriends: "Friends", navContest: "Contest", navProfile: "Profile",
+        errNotWatchedFully: "You haven't watched the ad completely or haven't clicked the link and stayed 7 seconds!",
+        successReward: "Success! Added +{amount} 💎 for ID: {id}",
+        minWithdrawErr: "Insufficient balance! Minimum 0.5 USDT required.",
+        inputWalletErr: "Please enter your USDT wallet address!",
+        withdrawSuccess: "Withdrawal request submitted successfully!"
+      },
+      ph: {
+        userId: "ID ng Manonood",
+        withdrawBtn: "⇄ Mag-withdraw sa USDT (BEP20)",
+        withdrawTitle: "Mag-withdraw ng USDT (BEP20)",
+        withdrawMin: "Minimum: 0.5 USDT",
+        enterWallet: "Ilagay ang USDT Address (BEP20):",
+        cancel: "Kanselahin",
+        confirm: "Ipadala ang Hiling",
+        statViews: "NANOOD NA",
+        unitViews: "Mga Panonood",
+        statSpeed: "PABILIS",
+        speedVal: "1.00x Base",
+        levelProgress: "Progresyon ng Antas",
+        networkTitle: "📚 Mga Network ng Ad",
+        adsgramDesc: "Opisyal na rewarded video ads ng Telegram",
+        monetagDesc: "Multi-format na video ads na mataas ang kita",
+        watchBtn: "► Manood",
+        loadingBtn: "► Naglo-load...",
+        retryBtn: "► Subukan Ulit",
+        navTask: "Mga Gawain", navFriends: "Mga Kaibigan", navContest: "Paligsahan", navProfile: "Profile",
+        errNotWatchedFully: "Hindi mo napanood nang buo ang ad o hindi mo na-click ang link at nag-stay ng 7 segundo!",
+        successReward: "Tagumpay! Naidagdag ang +{amount} 💎 para sa ID: {id}",
+        minWithdrawErr: "Kulang ang balanse! Kailangan ng minimum na 0.5 USDT.",
+        inputWalletErr: "Mangyaring ilagay ang iyong USDT wallet address!",
+        withdrawSuccess: "Matagumpay na naisumite ang kahilingan sa pag-withdraw!"
+      },
+      ru: {
+        userId: "ID Зрителя",
+        withdrawBtn: "⇄ Вывести USDT (BEP20)",
+        withdrawTitle: "Вывод USDT (BEP20)",
+        withdrawMin: "Минимум: 0.5 USDT",
+        enterWallet: "Введите адрес USDT (BEP20):",
+        cancel: "Отмена",
+        confirm: "Отправить запрос",
+        statViews: "ПРОСМОТРЕНО",
+        unitViews: "Просмотры",
+        statSpeed: "УСКОРЕНИЕ",
+        speedVal: "1.00x Базовый",
+        levelProgress: "Прогресс уровня",
+        networkTitle: "📚 Рекламные сети",
+        adsgramDesc: "Официальная видеореклама Telegram",
+        monetagDesc: "Высокодоходная видеореклама",
+        watchBtn: "► Смотреть",
+        loadingBtn: "► Загрузка...",
+        retryBtn: "► Повторить",
+        navTask: "Задания", navFriends: "Друзья", navContest: "Конкурс", navProfile: "Профиль",
+        errNotWatchedFully: "Вы не досмотрели рекламу до конца или не перешли по ссылке на 7 секунд!",
+        successReward: "Успешно! Добавлено +{amount} 💎 для ID: {id}",
+        minWithdrawErr: "Недостаточно средств! Требуется минимум 0.5 USDT.",
+        inputWalletErr: "Пожалуйста, введите адрес вашего USDT кошелька!",
+        withdrawSuccess: "Запрос на вывод успешно отправлен!"
+      }
+    };
+
+    let currentLang = localStorage.getItem('app_lang') || 'vi';
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('app_lang', lang);
+      document.getElementById('lang-select').value = lang;
+      
+      const t = i18n[lang];
+      document.getElementById('txt-user-id').innerText = t.userId;
+      document.getElementById('btn-withdraw').innerText = t.withdrawBtn;
+      document.getElementById('txt-withdraw-title').innerText = t.withdrawTitle;
+      document.getElementById('txt-withdraw-min').innerText = t.withdrawMin;
+      document.getElementById('txt-enter-wallet').innerText = t.enterWallet;
+      document.getElementById('btn-cancel').innerText = t.cancel;
+      document.getElementById('btn-confirm').innerText = t.confirm;
+      document.getElementById('txt-stat-views').innerText = t.statViews;
+      document.getElementById('txt-unit-views').innerText = t.unitViews;
+      document.getElementById('txt-unit-views2').innerText = t.unitViews.toLowerCase();
+      document.getElementById('txt-stat-speed').innerText = t.statSpeed;
+      document.getElementById('txt-speed-val').innerText = t.speedVal;
+      document.getElementById('txt-level-progress').innerText = t.levelProgress;
+      document.getElementById('txt-network-title').innerText = t.networkTitle;
+      document.getElementById('txt-adsgram-desc').innerText = t.adsgramDesc;
+      document.getElementById('txt-monetag-desc').innerText = t.monetagDesc;
+      document.getElementById('btn-watch-adsgram').innerText = t.watchBtn;
+      
+      let monetagBtn = document.getElementById('btn-monetag');
+      if (isMonetagReady) monetagBtn.innerText = t.watchBtn;
+      else monetagBtn.innerText = t.loadingBtn;
+
+      document.getElementById('nav-task').innerText = t.navTask;
+      document.getElementById('nav-friends').innerText = t.navFriends;
+      document.getElementById('nav-contest').innerText = t.navContest;
+      document.getElementById('nav-profile').innerText = t.navProfile;
+    }
+
+    // --- 2. TELEGRAM USER ID ---
     let tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     let userId = "guest_user";
     
@@ -199,85 +318,121 @@
       tg.ready();
       tg.expand();
       if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        userId = tg.initDataUnsafe.user.id.toString(); // Lấy Telegram User ID chuẩn
+        userId = tg.initDataUnsafe.user.id.toString();
       }
     }
+    
+    document.getElementById('display-user-id').innerText = userId;
 
-    let currentBalance = 0.0000;
-    let currentViews = 0;
+    let currentBalance = parseFloat(localStorage.getItem(`balance_${userId}`) || "0.0000");
+    let currentViews = parseInt(localStorage.getItem(`views_${userId}`) || "0");
+    
+    window.addEventListener('load', () => {
+      changeLanguage(currentLang);
+      updateUI();
+      preloadMonetag();
+    });
 
-    // 2. Preload Quảng cáo Monetag ngay khi vừa mở App (Theo đúng tài liệu)
+    // --- 3. ĐO THỜI GIAN CLICK LINK QUẢNG CÁO (TỐI THIỂU 7 GIÂY) ---
+    let adClickTime = 0;
+    let userHasClickedAd = false;
+
+    window.addEventListener('blur', () => {
+      adClickTime = Date.now();
+      userHasClickedAd = true;
+    });
+
+    function verifyClickDuration() {
+      if (!userHasClickedAd) return false;
+      let duration = (Date.now() - adClickTime) / 1000;
+      userHasClickedAd = false; 
+      return duration >= 7; 
+    }
+
+    // --- 4. MONETAG (YÊU CẦU XEM HẾT + CLICK LINK 7S) ---
     let isMonetagReady = false;
     function preloadMonetag() {
       if (typeof show_11643689 === 'function') {
         show_11643689({ type: 'preload', ymid: userId }).then(() => {
           isMonetagReady = true;
-          let btn = document.getElementById('btn-monetag');
-          if(btn) btn.innerText = "► Xem";
+          document.getElementById('btn-monetag').innerText = i18n[currentLang].watchBtn;
         }).catch(() => {
           isMonetagReady = false;
-          let btn = document.getElementById('btn-monetag');
-          if(btn) btn.innerText = "► Thử lại";
+          document.getElementById('btn-monetag').innerText = i18n[currentLang].retryBtn;
         });
       } else {
         setTimeout(preloadMonetag, 1000);
       }
     }
-    window.addEventListener('load', preloadMonetag);
 
-    // 3. Hàm gọi quảng cáo Monetag kèm ymid
     function watchMonetagAd() {
-      if (typeof show_11643689 !== 'function') {
-        alert("SDK Monetag chưa sẵn sàng, vui lòng kiểm tra kết nối!");
-        return;
-      }
+      if (typeof show_11643689 !== 'function') return;
+      userHasClickedAd = false;
 
+      // Hàm show_11643689 chỉ kích hoạt .then() khi người dùng ĐÃ XEM HẾT quảng cáo
       show_11643689({ ymid: userId }).then(() => {
-        // Quảng cáo xem thành công -> Cộng tiền
-        currentBalance += 0.0004;
-        currentViews += 1;
-        updateUI();
-        alert("Thành công! Bạn được cộng +0.0004 💎");
-        preloadMonetag(); // Tải sẵn cho lượt tiếp theo
+        // Kiểm tra điều kiện phụ: Bắt buộc đã click chuyển link ở lại tối thiểu 7s
+        setTimeout(() => {
+          if (verifyClickDuration()) {
+            congThuong(0.0004);
+            let msg = i18n[currentLang].successReward.replace('{amount}', '0.0004').replace('{id}', userId);
+            alert(msg);
+          } else {
+            alert(i18n[currentLang].errNotWatchedFully);
+          }
+          preloadMonetag();
+        }, 500);
       }).catch((err) => {
-        alert("Quảng cáo bị bỏ dở hoặc không khả dụng!");
+        // Nếu tắt quảng cáo giữa chừng hoặc bỏ qua -> Nhảy vào catch
+        alert(i18n[currentLang].errNotWatchedFully);
         preloadMonetag();
       });
     }
 
-    // 4. Adsgram SDK
+    // --- 5. ADSGRAM (YÊU CẦU XEM HẾT + CLICK LINK 7S) ---
     let adsgram = null;
     function watchAdsgramAd() {
       if (!adsgram && window.Adsgram) {
         adsgram = window.Adsgram.init({ blockId: "bot-44816" });
       }
-      if (!adsgram) {
-        alert("Vui lòng mở Mini App từ bên trong Telegram để xem Adsgram!");
-        return;
-      }
+      if (!adsgram) return;
+      
+      userHasClickedAd = false;
+
       adsgram.show().then(() => {
-        currentBalance += 0.0006;
-        currentViews += 1;
-        updateUI();
-        alert("Thành công! Bạn được cộng +0.0006 💎");
+        setTimeout(() => {
+          if (verifyClickDuration()) {
+            congThuong(0.0006);
+            let msg = i18n[currentLang].successReward.replace('{amount}', '0.0006').replace('{id}', userId);
+            alert(msg);
+          } else {
+            alert(i18n[currentLang].errNotWatchedFully);
+          }
+        }, 500);
       }).catch((err) => {
-        alert("Quảng cáo Adsgram bị hủy hoặc chưa tải xong!");
+        alert(i18n[currentLang].errNotWatchedFully);
       });
+    }
+
+    function congThuong(amount) {
+      currentBalance += amount;
+      currentViews += 1;
+      localStorage.setItem(`balance_${userId}`, currentBalance.toFixed(4));
+      localStorage.setItem(`views_${userId}`, currentViews.toString());
+      updateUI();
     }
 
     function updateUI() {
       document.getElementById('user-balance').innerText = currentBalance.toFixed(4);
       document.getElementById('weekly-views').innerText = currentViews;
       document.getElementById('level-views').innerText = currentViews;
-      document.getElementById('pool-views').innerText = currentViews;
       document.getElementById('level-progress').style.width = Math.min((currentViews / 50) * 100, 100) + '%';
-      document.getElementById('pool-progress').style.width = Math.min((currentViews / 330) * 100, 100) + '%';
     }
 
-    // Modal rút tiền
+    // --- 6. RÚT TIỀN ---
     function openWithdrawModal() {
       if (currentBalance < 0.5) {
-        alert("Số dư chưa đủ! Cần tối thiểu 0.5 USDT (BEP20) để rút.");
+        alert(i18n[currentLang].minWithdrawErr);
         return;
       }
       document.getElementById('withdrawModal').style.display = 'flex';
@@ -290,7 +445,7 @@
     function submitWithdraw() {
       let wallet = document.getElementById('usdtWallet').value.trim();
       if (!wallet) {
-        alert("Vui lòng nhập địa chỉ ví USDT!");
+        alert(i18n[currentLang].inputWalletErr);
         return;
       }
       let botToken = "8946115398:AAERZIkvF4cQpU-9d8xw97s4zFL0VvVMLTw";
@@ -304,9 +459,10 @@
       });
 
       currentBalance = 0;
+      localStorage.setItem(`balance_${userId}`, "0.0000");
       updateUI();
       closeWithdrawModal();
-      alert("Đã gửi yêu cầu rút tiền thành công!");
+      alert(i18n[currentLang].withdrawSuccess);
     }
   </script>
 </body>
