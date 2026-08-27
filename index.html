@@ -1,284 +1,297 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nhà Máy In Giấy - Mini App</title>
-    <!-- Monetag SDK script -->
-    <script src="//libtl.com/sdk.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-        body {
-            background-color: #f7f3e9;
-            color: #333;
-            padding-bottom: 70px;
-        }
-        header {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .stats-container {
-            display: flex;
-            justify-content: space-around;
-            background: white;
-            margin: 15px;
-            padding: 12px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .stat-box {
-            text-align: center;
-        }
-        .stat-box .label {
-            font-size: 12px;
-            color: #666;
-        }
-        .stat-box .value {
-            font-size: 16px;
-            font-weight: bold;
-            color: #b45309;
-            margin-top: 4px;
-        }
-        .card {
-            background: white;
-            margin: 15px;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        .machine-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-        .machine-status {
-            font-size: 14px;
-            color: #059669;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-        .btn {
-            background-color: #f59e0b;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
-            margin-top: 10px;
-        }
-        .btn:active {
-            transform: scale(0.98);
-        }
-        .btn-ad {
-            background-color: #2563eb;
-        }
-        .notice {
-            font-size: 13px;
-            color: #d97706;
-            margin-top: 10px;
-        }
-        /* Nav bar */
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-            border-top: 1px solid #e5e7eb;
-        }
-        .nav-item {
-            text-align: center;
-            font-size: 11px;
-            color: #666;
-            cursor: pointer;
-            flex: 1;
-        }
-        .nav-item.active {
-            color: #d97706;
-            font-weight: bold;
-        }
-        .nav-item div:first-child {
-            font-size: 18px;
-            margin-bottom: 2px;
-        }
-        .section {
-            display: none;
-        }
-        .section.active {
-            display: block;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>PaidZ Mini App</title>
+  
+  <!-- SDK Telegram WebApp -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <!-- SDK Monetag -->
+  <script src='//libtl.com/sdk.js' data-zone='11643689' data-sdk='show_11643689'></script>
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
+    body { background-color: #0b101d; color: #ffffff; display: flex; flex-direction: column; min-height: 100vh; padding: 16px; padding-bottom: 80px; }
+    
+    /* Header Số dư */
+    .balance-container { text-align: center; margin-top: 10px; margin-bottom: 16px; }
+    .balance-val { font-size: 42px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; }
+    .token-icon { width: 32px; height: 32px; background: #00b49d; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+    
+    .btn-withdraw { background: #0088cc; color: #fff; border: none; width: 100%; padding: 12px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; }
+    
+    /* Grid chỉ số */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .stat-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .stat-title { font-size: 11px; color: #8a99ad; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+    .stat-val { font-size: 15px; font-weight: 700; }
+    .stat-icon { width: 32px; height: 32px; background: #1a273e; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #0088cc; }
+
+    /* Thanh Cấp độ */
+    .level-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 12px; margin-bottom: 16px; }
+    .level-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: #8a99ad; }
+    .level-tag { background: #1c3238; color: #00e6b8; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px; }
+    
+    .progress-bar { background: #1a273e; height: 6px; border-radius: 3px; overflow: hidden; }
+    .progress-fill { background: #00e6b8; height: 100%; width: 0%; }
+
+    /* Quỹ thưởng */
+    .pool-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 14px; margin-bottom: 20px; }
+    .pool-info { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .pool-icon { width: 36px; height: 36px; background: #383217; color: #ffcc00; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .pool-text { flex: 1; }
+    .pool-title { font-size: 14px; font-weight: 700; }
+    .pool-sub { font-size: 12px; color: #8a99ad; }
+    .pool-max { text-align: right; font-size: 11px; color: #8a99ad; }
+    .pool-reward { text-align: right; font-size: 14px; font-weight: 700; color: #00e6b8; }
+    .timer { font-size: 11px; color: #8a99ad; margin-top: 10px; display: flex; justify-content: space-between; }
+
+    /* Mạng Quảng Cáo */
+    .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .ad-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .ad-top { display: flex; align-items: center; justify-content: space-between; }
+    .ad-brand { display: flex; align-items: center; gap: 12px; }
+    .ad-logo { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
+    .logo-adsgram { background: linear-gradient(135deg, #ff007a, #7928ca); }
+    .logo-monetag { background: #ffffff; color: #000; font-size: 10px; font-weight: bold; }
+    
+    .ad-details { flex: 1; }
+    .ad-name { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .badge-yield { background: #3d3215; color: #ffcc00; font-size: 10px; padding: 2px 6px; border-radius: 8px; }
+    .ad-desc { font-size: 11px; color: #8a99ad; margin-top: 2px; }
+    .ad-rate { font-size: 12px; color: #00e6b8; font-weight: 700; margin-top: 4px; }
+    
+    .btn-watch { background: #0088cc; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .btn-watch:active { opacity: 0.8; }
+    
+    .limit-text { font-size: 11px; color: #8a99ad; display: flex; justify-content: space-between; margin-top: 4px; }
+
+    /* Modal Rút tiền */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+    .modal-content { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; text-align: center; }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .modal-subtitle { font-size: 11px; color: #00e6b8; margin-bottom: 12px; font-weight: 600; }
+    .modal-input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #1e2d4a; background: #0b101d; color: #fff; margin-bottom: 12px; font-size: 14px; outline: none; }
+    .modal-btns { display: flex; gap: 8px; }
+    .modal-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
+    .btn-confirm { background: #00b49d; color: #fff; }
+    .btn-cancel { background: #1a273e; color: #8a99ad; }
+
+    /* Navigation Bar */
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0d1424; border-top: 1px solid #1e2d4a; display: flex; justify-space-around; padding: 8px 0; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 10px; gap: 4px; }
+    .nav-item.active { color: #0088cc; }
+    .nav-icon { font-size: 18px; }
+    .paidz-btn { width: 44px; height: 44px; background: #0088cc; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; margin-top: -15px; border: 3px solid #0b101d; box-shadow: 0 0 10px rgba(0,136,204,0.5); }
+  </style>
 </head>
 <body>
 
-    <header>🏭 NHÀ MÁY IN GIẤY</header>
+  <!-- Số dư khởi tạo 0.0000 -->
+  <div class="balance-container">
+    <div class="balance-val"><span id="user-balance">0.0000</span> <div class="token-icon">💎</div></div>
+  </div>
 
-    <!-- Thống kê chung -->
-    <div class="stats-container">
-        <div class="stat-box">
-            <div class="label">KHO GIẤY TRẮNG</div>
-            <div class="value" id="paperCount">1,852,877</div>
-        </div>
-        <div class="stat-box">
-            <div class="label">BÁNH RĂNG</div>
-            <div class="value" id="gearCount">97</div>
-        </div>
+  <button class="btn-withdraw" onclick="openWithdrawModal()">⇄ Rút về USDT (BEP20)</button>
+
+  <!-- Popup Modal Rút Tiền -->
+  <div class="modal" id="withdrawModal">
+    <div class="modal-content">
+      <div class="modal-title">Rút USDT (BEP20)</div>
+      <div class="modal-subtitle">Tối thiểu: 0.5 USDT</div>
+      <p style="font-size: 12px; color: #8a99ad; margin-bottom: 8px; text-align: left;">Nhập địa chỉ ví USDT (BEP20):</p>
+      <input type="text" class="modal-input" id="usdtWallet" placeholder="0x...">
+      <div class="modal-btns">
+        <button class="modal-btn btn-cancel" onclick="closeWithdrawModal()">Hủy</button>
+        <button class="modal-btn btn-confirm" onclick="submitWithdraw()">Gửi Yêu Cầu</button>
+      </div>
     </div>
+  </div>
 
-    <!-- TAB 1: NHÀ MÁY -->
-    <div id="tab-factory" class="section active">
-        <div class="card">
-            <div class="machine-icon">🤖</div>
-            <div class="machine-status">⚡ Đang chạy (Năng suất: 205,200/giờ)</div>
-            <div style="font-size: 20px; font-weight: bold; margin-bottom: 15px;" id="livePaper">1,852,877</div>
-            <button class="btn" onclick="toggleMachine()">DỪNG MÁY</button>
-        </div>
-
-        <div class="card">
-            <h3>🎁 Xem quảng cáo nhận thưởng</h3>
-            <p class="notice">Giới hạn tối đa 50 lần/ngày</p>
-            <button class="btn btn-ad" onclick="watchRewardedAd()">Xem QC Nhận Giấy (Còn <span id="adLimit">50</span>/50)</button>
-        </div>
+  <!-- Chỉ số lượt xem ban đầu = 0 -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div>
+        <div class="stat-title">THIS WEEK</div>
+        <div class="stat-val"><span id="weekly-views">0</span> Lượt xem</div>
+      </div>
+      <div class="stat-icon">📺</div>
     </div>
-
-    <!-- TAB 2: TÁI CHẾ -->
-    <div id="tab-recycle" class="section">
-        <div class="card">
-            <h3>🔄 Xưởng Tái Chế</h3>
-            <p style="font-size: 14px; color: #666; margin: 10px 0;">Tỷ giá: 125 Giấy = 1 Bánh răng</p>
-            <input type="number" id="recycleInput" placeholder="Nhập số lượng giấy..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 10px; font-size: 16px;">
-            <button class="btn" onclick="doRecycle()">Tiến Hành Đổi</button>
-        </div>
+    <div class="stat-card">
+      <div>
+        <div class="stat-title">TĂNG TỐC QUẢN...</div>
+        <div class="stat-val" style="color:#00e6b8">1.00x Cơ bản</div>
+      </div>
+      <div class="stat-icon" style="color:#00e6b8">🔥</div>
     </div>
+  </div>
 
-    <!-- TAB 3: TUYỂN DỤNG (REF) -->
-    <div id="tab-ref" class="section">
-        <div class="card">
-            <h3>📢 Tuyển Dụng Công Nhân</h3>
-            <p style="font-size: 14px; color: #666; margin: 10px 0;">Mời bạn bè để nhận thêm giấy và bánh răng!</p>
-            <input type="text" readonly value="https://t.me/nhamayingiaty_bot?start=ref123" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; background: #f3f4f6; text-align: center; margin-bottom: 10px; font-size: 12px;">
-            <button class="btn" onclick="copyRefLink()">Sao Chép Link Giới Thiệu</button>
-        </div>
+  <!-- Cấp độ -->
+  <div class="level-card">
+    <div class="level-header">
+      <span>Cấp Tiếp Theo: Bạc <span class="level-tag">+5% Tăng Tốc</span></span>
+      <span><span id="level-views">0</span> / 50 lượt xem</span>
     </div>
+    <div class="progress-bar"><div class="progress-fill" id="level-progress"></div></div>
+  </div>
 
-    <!-- THANH ĐIỀU HƯỚNG DƯỚI ĐÁY -->
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="switchTab('factory', this)">
-            <div>🏭</div>
-            <div>Nhà Máy</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('recycle', this)">
-            <div>🔄</div>
-            <div>Tái Chế</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('ref', this)">
-            <div>👥</div>
-            <div>Tuyển Dụng</div>
-        </div>
+  <!-- Quỹ thưởng -->
+  <div class="pool-card">
+    <div class="pool-info">
+      <div class="pool-icon">🪙</div>
+      <div class="pool-text">
+        <div class="pool-title">Quỹ Thưởng Hàng Ngày</div>
+        <div class="pool-sub"><span id="pool-views">0</span> / 330 Quảng Cáo Đã Xem</div>
+      </div>
+      <div>
+        <div class="pool-max">Tối Đa Ngày</div>
+        <div class="pool-reward">~0.144 💎</div>
+      </div>
     </div>
+    <div class="progress-bar"><div class="progress-fill" id="pool-progress"></div></div>
+    <div class="timer">
+      <span>⏰ Đặt lại hàng ngày sau</span>
+      <span style="background:#1a273e; padding:2px 6px; border-radius:4px; font-weight:bold;">13:32:11</span>
+    </div>
+  </div>
 
-    <script>
-        let papers = 1852877;
-        let gears = 97;
-        let adCountToday = 0;
-        const MAX_ADS = 50;
+  <!-- Mạng quảng cáo -->
+  <div class="section-title">📚 Mạng Quảng Cáo</div>
 
-        // Chuyển tab giao diện
-        function switchTab(tabName, element) {
-            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            
-            if(tabName === 'factory') document.getElementById('tab-factory').classList.add('active');
-            if(tabName === 'recycle') document.getElementById('tab-recycle').classList.add('active');
-            if(tabName === 'ref') document.getElementById('tab-ref').classList.add('active');
-            
-            element.classList.add('active');
-        }
+  <!-- Adsgram -->
+  <div class="ad-card">
+    <div class="ad-top">
+      <div class="ad-brand">
+        <div class="ad-logo logo-adsgram">A</div>
+        <div class="ad-details">
+          <div class="ad-name">Adsgram <span class="badge-yield">Top Yield</span></div>
+          <div class="ad-desc">Official Telegram rewarded video ads</div>
+          <div class="ad-rate">+0.0006 💎 / view</div>
+        </div>
+      </div>
+      <button class="btn-watch" onclick="alert('Adsgram yêu cầu Block ID riêng!')">► Xem</button>
+    </div>
+    <div class="limit-text"><span>Giới Hạn Ngày</span><span>0 / 100 (0%)</span></div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
 
-        function toggleMachine() {
-            alert('Trạng thái máy in đã thay đổi!');
-        }
+  <!-- Monetag -->
+  <div class="ad-card">
+    <div class="ad-top">
+      <div class="ad-brand">
+        <div class="ad-logo logo-monetag">monetag</div>
+        <div class="ad-details">
+          <div class="ad-name">Monetag</div>
+          <div class="ad-desc">High-yield multi-format video ads</div>
+          <div class="ad-rate">+0.0004 💎 / view</div>
+        </div>
+      </div>
+      <button class="btn-watch" onclick="watchMonetagAd()">► Xem</button>
+    </div>
+  </div>
 
-        function doRecycle() {
-            let inputVal = parseInt(document.getElementById('recycleInput').value);
-            if (isNaN(inputVal) || inputVal <= 0) {
-                alert('Vui lòng nhập số lượng hợp lệ!');
-                return;
-            }
-            if (inputVal > papers) {
-                alert('Bạn không đủ giấy trong kho!');
-                return;
-            }
-            let earnedGears = Math.floor(inputVal / 125);
-            papers -= inputVal;
-            gears += earnedGears;
-            
-            document.getElementById('paperCount').innerText = papers.toLocaleString();
-            document.getElementById('livePaper').innerText = papers.toLocaleString();
-            document.getElementById('gearCount').innerText = gears.toLocaleString();
-            alert(`Đổi thành công ${earnedGears} Bánh răng!`);
-        }
+  <!-- Thanh Menu dưới -->
+  <div class="nav-bar">
+    <div class="nav-item"><div class="nav-icon">📊</div>Nhiệm Vụ</div>
+    <div class="nav-item"><div class="nav-icon">👥</div>Bạn Bè</div>
+    <div class="nav-item active"><div class="paidz-btn">P</div>PaidZ</div>
+    <div class="nav-item"><div class="nav-icon">🏆</div>Cuộc Thi</div>
+    <div class="nav-item"><div class="nav-icon">👤</div>Cá Nhân</div>
+  </div>
 
-        function copyRefLink() {
-            navigator.clipboard.writeText("https://t.me/nhamayingiaty_bot?start=ref123");
-            alert("Đã sao chép link giới thiệu!");
-        }
+  <script>
+    // Khởi tạo Telegram WebApp
+    let tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
 
-        // 1. Quản cáo Rewarded (Giới hạn 50 lần/ngày)
-        function watchRewardedAd() {
-            if (adCountToday >= MAX_ADS) {
-                alert("Bạn đã đạt giới hạn xem quảng cáo (50 lần) trong ngày hôm nay!");
-                return;
-            }
+    // Số dư và lượt xem ban đầu = 0
+    let currentBalance = 0.0000;
+    let currentViews = 0;
 
-            // Gọi hàm Monetag rewarded interstitial
-            show_11643689().then(() => {
-                adCountToday++;
-                document.getElementById('adLimit').innerText = MAX_ADS - adCountToday;
-                
-                // Cộng thưởng cho người dùng
-                papers += 100000;
-                document.getElementById('paperCount').innerText = papers.toLocaleString();
-                document.getElementById('livePaper').innerText = papers.toLocaleString();
-                alert('Bạn đã xem xong quảng cáo và nhận được 100,000 Giấy!');
-            }).catch(e => {
-                console.log('Quảng cáo bị lỗi hoặc chưa hoàn thành', e);
-            });
-        }
+    // Quản lý Modal Rút Tiền
+    function openWithdrawModal() {
+      if (currentBalance < 0.5) {
+        alert("Số dư chưa đủ! Cần tối thiểu 0.5 USDT (BEP20) để rút.");
+        return;
+      }
+      document.getElementById('withdrawModal').style.display = 'flex';
+    }
 
-        // 2. Tự động kích hoạt In-App Interstitial theo cấu hình (mỗi 15-30 giây / tần suất định mức)
-        try {
-            show_11643689({
-              type: 'inApp',
-              inAppSettings: {
-                frequency: 2,
-                capping: 0.1,
-                interval: 30,
-                timeout: 5,
-                everyPage: false
-              }
-            });
-        } catch (err) {
-            console.log('In-App ad init error:', err);
-        }
-    </script>
+    function closeWithdrawModal() {
+      document.getElementById('withdrawModal').style.display = 'none';
+    }
+
+    function submitWithdraw() {
+      let wallet = document.getElementById('usdtWallet').value.trim();
+      if (!wallet) {
+        alert("Vui lòng nhập địa chỉ ví USDT (BEP20)!");
+        return;
+      }
+
+      // Lấy thông tin User Telegram nếu có
+      let user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : { id: "Ẩn danh", username: "khách" };
+      let userName = user.username ? `@${user.username}` : user.first_name || user.id;
+
+      let amount = currentBalance.toFixed(4);
+
+      // Bot Token & Admin Chat ID
+      let botToken = "8946115398:AAERZIkvF4cQpU-9d8xw97s4zFL0VvVMLTw";
+      let adminChatId = "7496441289";
+
+      let message = `🔔 *CÓ YÊU CẦU RÚT USDT (BEP20) MỚI!*\n\n` +
+                    `- Người rút: ${userName} (ID: ${user.id})\n` +
+                    `- Số lượng: ${amount} USDT\n` +
+                    `- Mạng: BEP20\n` +
+                    `- Địa chỉ ví: \`${wallet}\`\n\n` +
+                    `Hãy kiểm tra và duyệt cho người dùng nhé!`;
+
+      // Gửi yêu cầu qua Telegram Bot API về cho Admin
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: adminChatId,
+          text: message,
+          parse_mode: "Markdown"
+        })
+      }).catch(err => console.log(err));
+
+      // Reset số dư về 0 sau khi đặt lệnh thành công
+      currentBalance = 0;
+      document.getElementById('user-balance').innerText = "0.0000";
+      closeWithdrawModal();
+      alert("Yêu cầu rút tiền thành công! Hệ thống đã gửi thông báo đến Admin để chờ duyệt.");
+    }
+
+    // Xử lý xem quảng cáo Monetag
+    function watchMonetagAd() {
+      if (typeof show_11643689 === 'function') {
+        show_11643689().then(() => {
+          currentBalance += 0.0004;
+          currentViews += 1;
+          
+          document.getElementById('user-balance').innerText = currentBalance.toFixed(4);
+          document.getElementById('weekly-views').innerText = currentViews;
+          document.getElementById('level-views').innerText = currentViews;
+          document.getElementById('pool-views').innerText = currentViews;
+          
+          document.getElementById('level-progress').style.width = Math.min((currentViews / 50) * 100, 100) + '%';
+          document.getElementById('pool-progress').style.width = Math.min((currentViews / 330) * 100, 100) + '%';
+
+          alert("Thành công! Bạn được cộng +0.0004 💎");
+        }).catch((err) => {
+          alert("Quảng cáo bị bỏ dở hoặc chưa tải xong!");
+        });
+      } else {
+        alert("Quảng cáo Monetag đang nạp, vui lòng bấm lại sau 3 giây!");
+      }
+    }
+  </script>
 </body>
 </html>
+
