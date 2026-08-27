@@ -10,6 +10,9 @@
   
   <!-- SDK Monetag -->
   <script src='//libtl.com/sdk.js' data-zone='11643689' data-sdk='show_11643689'></script>
+
+  <!-- SDK Adsgram -->
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
@@ -289,8 +292,25 @@
         });
       } else {
         alert("Quảng cáo Monetag đang nạp, vui lòng bấm lại sau 3 giây!");
-      }
-    }
+   // Khởi tạo Adsgram với Block ID của bạn
+const adsgram = window.Adsgram ? window.Adsgram.init({ blockId: "bot-44816" }) : null;
+
+// Hàm xử lý xem quảng cáo Adsgram
+function watchAdsgramAd() {
+  if (!adsgram) {
+    alert("Adsgram chưa sẵn sàng, vui lòng thử lại sau!");
+    return;
+  }
+  adsgram.show().then(() => {
+    currentBalance += 0.0006;
+    currentViews += 1;
+    document.getElementById('user-balance').innerText = currentBalance.toFixed(4);
+    alert("Thành công! Bạn được cộng +0.0006 USDT");
+  }).catch((err) => {
+    alert("Quảng cáo bị bỏ dở hoặc chưa tải xong!");
+  });
+}
+        
   </script>
 </body>
 </html>
