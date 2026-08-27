@@ -5,37 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>PaidZ Mini App</title>
   
-  <!-- Thẻ xác minh Monetag của bạn -->
+  <!-- Thẻ xác minh Monetag -->
   <meta name="monetag" content="3108df7f481afc51a165ab7a20f266dc">
 
-  <!-- SDK Telegram WebApp -->
+  <!-- 1. SDK Telegram WebApp (Bắt buộc theo hướng dẫn của Monetag) -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
-  <!-- SDK Monetag -->
+  <!-- 2. SDK Monetag Zone Chính -->
   <script src='//libtl.com/sdk.js' data-zone='11643689' data-sdk='show_11643689'></script>
 
-  <!-- SDK Adsgram -->
+  <!-- 3. SDK Adsgram -->
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
     body { background-color: #0b101d; color: #ffffff; display: flex; flex-direction: column; min-height: 100vh; padding: 16px; padding-bottom: 80px; }
     
-    /* Header Số dư */
     .balance-container { text-align: center; margin-top: 10px; margin-bottom: 16px; }
     .balance-val { font-size: 42px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; }
     .token-icon { width: 32px; height: 32px; background: #00b49d; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
     
     .btn-withdraw { background: #0088cc; color: #fff; border: none; width: 100%; padding: 12px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; }
     
-    /* Grid chỉ số */
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
     .stat-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
     .stat-title { font-size: 11px; color: #8a99ad; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
     .stat-val { font-size: 15px; font-weight: 700; }
     .stat-icon { width: 32px; height: 32px; background: #1a273e; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #0088cc; }
 
-    /* Thanh Cấp độ */
     .level-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 12px; margin-bottom: 16px; }
     .level-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: #8a99ad; }
     .level-tag { background: #1c3238; color: #00e6b8; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px; }
@@ -43,7 +40,6 @@
     .progress-bar { background: #1a273e; height: 6px; border-radius: 3px; overflow: hidden; }
     .progress-fill { background: #00e6b8; height: 100%; width: 0%; }
 
-    /* Quỹ thưởng */
     .pool-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 14px; margin-bottom: 20px; }
     .pool-info { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
     .pool-icon { width: 36px; height: 36px; background: #383217; color: #ffcc00; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -54,7 +50,6 @@
     .pool-reward { text-align: right; font-size: 14px; font-weight: 700; color: #00e6b8; }
     .timer { font-size: 11px; color: #8a99ad; margin-top: 10px; display: flex; justify-content: space-between; }
 
-    /* Mạng Quảng Cáo */
     .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .ad-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
     .ad-top { display: flex; align-items: center; justify-content: space-between; }
@@ -70,11 +65,9 @@
     .ad-rate { font-size: 12px; color: #00e6b8; font-weight: 700; margin-top: 4px; }
     
     .btn-watch { background: #0088cc; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .btn-watch:disabled { background: #3a4b68; color: #8a99ad; cursor: not-allowed; }
     .btn-watch:active { opacity: 0.8; }
-    
-    .limit-text { font-size: 11px; color: #8a99ad; display: flex; justify-content: space-between; margin-top: 4px; }
 
-    /* Modal Rút tiền */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
     .modal-content { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; text-align: center; }
     .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
@@ -85,7 +78,6 @@
     .btn-confirm { background: #00b49d; color: #fff; }
     .btn-cancel { background: #1a273e; color: #8a99ad; }
 
-    /* Navigation Bar */
     .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0d1424; border-top: 1px solid #1e2d4a; display: flex; justify-content: space-around; padding: 8px 0; }
     .nav-item { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 10px; gap: 4px; }
     .nav-item.active { color: #0088cc; }
@@ -95,14 +87,12 @@
 </head>
 <body>
 
-  <!-- Số dư khởi tạo 0.0000 -->
   <div class="balance-container">
     <div class="balance-val"><span id="user-balance">0.0000</span> <div class="token-icon">💎</div></div>
   </div>
 
   <button class="btn-withdraw" onclick="openWithdrawModal()">⇄ Rút về USDT (BEP20)</button>
 
-  <!-- Popup Modal Rút Tiền -->
   <div class="modal" id="withdrawModal">
     <div class="modal-content">
       <div class="modal-title">Rút USDT (BEP20)</div>
@@ -116,7 +106,6 @@
     </div>
   </div>
 
-  <!-- Chỉ số lượt xem ban đầu = 0 -->
   <div class="stats-grid">
     <div class="stat-card">
       <div>
@@ -134,7 +123,6 @@
     </div>
   </div>
 
-  <!-- Cấp độ -->
   <div class="level-card">
     <div class="level-header">
       <span>Cấp Tiếp Theo: Bạc <span class="level-tag">+5% Tăng Tốc</span></span>
@@ -143,7 +131,6 @@
     <div class="progress-bar"><div class="progress-fill" id="level-progress"></div></div>
   </div>
 
-  <!-- Quỹ thưởng -->
   <div class="pool-card">
     <div class="pool-info">
       <div class="pool-icon">🪙</div>
@@ -163,7 +150,6 @@
     </div>
   </div>
 
-  <!-- Mạng quảng cáo -->
   <div class="section-title">📚 Mạng Quảng Cáo</div>
 
   <!-- Adsgram -->
@@ -179,8 +165,6 @@
       </div>
       <button class="btn-watch" onclick="watchAdsgramAd()">► Xem</button>
     </div>
-    <div class="limit-text"><span>Giới Hạn Ngày</span><span>0 / 100 (0%)</span></div>
-    <div class="progress-bar"><div class="progress-fill"></div></div>
   </div>
 
   <!-- Monetag -->
@@ -194,11 +178,10 @@
           <div class="ad-rate">+0.0004 💎 / view</div>
         </div>
       </div>
-      <button class="btn-watch" onclick="watchMonetagAd()">► Xem</button>
+      <button class="btn-watch" id="btn-monetag" onclick="watchMonetagAd()">► Đang tải...</button>
     </div>
   </div>
 
-  <!-- Thanh Menu dưới -->
   <div class="nav-bar">
     <div class="nav-item"><div class="nav-icon">📊</div>Nhiệm Vụ</div>
     <div class="nav-item"><div class="nav-icon">👥</div>Bạn Bè</div>
@@ -208,18 +191,90 @@
   </div>
 
   <script>
-    // Khởi tạo Telegram WebApp
+    // 1. Sẵn sàng SDK Telegram
     let tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    let userId = "guest_user";
+    
     if (tg) {
       tg.ready();
       tg.expand();
+      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        userId = tg.initDataUnsafe.user.id.toString(); // Lấy Telegram User ID chuẩn
+      }
     }
 
-    // Số dư và lượt xem ban đầu = 0
     let currentBalance = 0.0000;
     let currentViews = 0;
 
-    // Quản lý Modal Rút Tiền
+    // 2. Preload Quảng cáo Monetag ngay khi vừa mở App (Theo đúng tài liệu)
+    let isMonetagReady = false;
+    function preloadMonetag() {
+      if (typeof show_11643689 === 'function') {
+        show_11643689({ type: 'preload', ymid: userId }).then(() => {
+          isMonetagReady = true;
+          let btn = document.getElementById('btn-monetag');
+          if(btn) btn.innerText = "► Xem";
+        }).catch(() => {
+          isMonetagReady = false;
+          let btn = document.getElementById('btn-monetag');
+          if(btn) btn.innerText = "► Thử lại";
+        });
+      } else {
+        setTimeout(preloadMonetag, 1000);
+      }
+    }
+    window.addEventListener('load', preloadMonetag);
+
+    // 3. Hàm gọi quảng cáo Monetag kèm ymid
+    function watchMonetagAd() {
+      if (typeof show_11643689 !== 'function') {
+        alert("SDK Monetag chưa sẵn sàng, vui lòng kiểm tra kết nối!");
+        return;
+      }
+
+      show_11643689({ ymid: userId }).then(() => {
+        // Quảng cáo xem thành công -> Cộng tiền
+        currentBalance += 0.0004;
+        currentViews += 1;
+        updateUI();
+        alert("Thành công! Bạn được cộng +0.0004 💎");
+        preloadMonetag(); // Tải sẵn cho lượt tiếp theo
+      }).catch((err) => {
+        alert("Quảng cáo bị bỏ dở hoặc không khả dụng!");
+        preloadMonetag();
+      });
+    }
+
+    // 4. Adsgram SDK
+    let adsgram = null;
+    function watchAdsgramAd() {
+      if (!adsgram && window.Adsgram) {
+        adsgram = window.Adsgram.init({ blockId: "bot-44816" });
+      }
+      if (!adsgram) {
+        alert("Vui lòng mở Mini App từ bên trong Telegram để xem Adsgram!");
+        return;
+      }
+      adsgram.show().then(() => {
+        currentBalance += 0.0006;
+        currentViews += 1;
+        updateUI();
+        alert("Thành công! Bạn được cộng +0.0006 💎");
+      }).catch((err) => {
+        alert("Quảng cáo Adsgram bị hủy hoặc chưa tải xong!");
+      });
+    }
+
+    function updateUI() {
+      document.getElementById('user-balance').innerText = currentBalance.toFixed(4);
+      document.getElementById('weekly-views').innerText = currentViews;
+      document.getElementById('level-views').innerText = currentViews;
+      document.getElementById('pool-views').innerText = currentViews;
+      document.getElementById('level-progress').style.width = Math.min((currentViews / 50) * 100, 100) + '%';
+      document.getElementById('pool-progress').style.width = Math.min((currentViews / 330) * 100, 100) + '%';
+    }
+
+    // Modal rút tiền
     function openWithdrawModal() {
       if (currentBalance < 0.5) {
         alert("Số dư chưa đủ! Cần tối thiểu 0.5 USDT (BEP20) để rút.");
@@ -235,105 +290,23 @@
     function submitWithdraw() {
       let wallet = document.getElementById('usdtWallet').value.trim();
       if (!wallet) {
-        alert("Vui lòng nhập địa chỉ ví USDT (BEP20)!");
+        alert("Vui lòng nhập địa chỉ ví USDT!");
         return;
       }
-
-      let user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : { id: "Ẩn danh", username: "khách" };
-      let userName = user.username ? `@${user.username}` : user.first_name || user.id;
-      let amount = currentBalance.toFixed(4);
-
       let botToken = "8946115398:AAERZIkvF4cQpU-9d8xw97s4zFL0VvVMLTw";
       let adminChatId = "7496441289";
-
-      let message = `🔔 *CÓ YÊU CẦU RÚT USDT (BEP20) MỚI!*\n\n` +
-                    `- Người rút: ${userName} (ID: ${user.id})\n` +
-                    `- Số lượng: ${amount} USDT\n` +
-                    `- Mạng: BEP20\n` +
-                    `- Địa chỉ ví: \`${wallet}\`\n\n` +
-                    `Hãy kiểm tra và duyệt cho người dùng nhé!`;
+      let message = `🔔 *YÊU CẦU RÚT USDT*\nUser ID: ${userId}\nSố tiền: ${currentBalance.toFixed(4)} USDT\nVí: \`${wallet}\``;
 
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: adminChatId,
-          text: message,
-          parse_mode: "Markdown"
-        })
-      }).catch(err => console.log(err));
+        body: JSON.stringify({ chat_id: adminChatId, text: message, parse_mode: "Markdown" })
+      });
 
       currentBalance = 0;
-      document.getElementById('user-balance').innerText = "0.0000";
+      updateUI();
       closeWithdrawModal();
-      alert("Yêu cầu rút tiền thành công! Hệ thống đã gửi thông báo đến Admin để chờ duyệt.");
-    }
-
-    // Xử lý xem quảng cáo Monetag
-    function watchMonetagAd() {
-      if (typeof show_11643689 === 'function') {
-        show_11643689().then(() => {
-          currentBalance += 0.0004;
-          currentViews += 1;
-          
-          document.getElementById('user-balance').innerText = currentBalance.toFixed(4);
-          document.getElementById('weekly-views').innerText = currentViews;
-          document.getElementById('level-views').innerText = currentViews;
-          document.getElementById('pool-views').innerText = currentViews;
-          
-          document.getElementById('level-progress').style.width = Math.min((currentViews / 50) * 100, 100) + '%';
-          document.getElementById('pool-progress').style.width = Math.min((currentViews / 330) * 100, 100) + '%';
-
-          alert("Thành công! Bạn được cộng +0.0004 💎");
-        }).catch((err) => {
-          alert("Quảng cáo Monetag chưa sẵn sàng hoặc bị đóng!");
-        });
-      } else {
-        alert("Đang tải quảng cáo Monetag, vui lòng thử lại sau 3 giây!");
-      }
-    }
-
-    // Khởi tạo Adsgram an toàn
-    let adsgram = null;
-    try {
-      if (window.Adsgram) {
-        adsgram = window.Adsgram.init({ blockId: "bot-44816" });
-      }
-    } catch (e) {
-      console.log("Adsgram init error:", e);
-    }
-
-    // Xử lý xem quảng cáo Adsgram
-    function watchAdsgramAd() {
-      if (!adsgram) {
-        try {
-          if (window.Adsgram) {
-            adsgram = window.Adsgram.init({ blockId: "bot-44816" });
-          }
-        } catch(e) {}
-      }
-
-      if (!adsgram) {
-        alert("Thư viện Adsgram chưa sẵn sàng, hãy kiểm tra lại kết nối mạng!");
-        return;
-      }
-
-      adsgram.show().then(() => {
-        currentBalance += 0.0006;
-        currentViews += 1;
-        
-        document.getElementById('user-balance').innerText = currentBalance.toFixed(4);
-        document.getElementById('weekly-views').innerText = currentViews;
-        document.getElementById('level-views').innerText = currentViews;
-        document.getElementById('pool-views').innerText = currentViews;
-        
-        document.getElementById('level-progress').style.width = Math.min((currentViews / 50) * 100, 100) + '%';
-        document.getElementById('pool-progress').style.width = Math.min((currentViews / 330) * 100, 100) + '%';
-
-        alert("Thành công! Bạn được cộng +0.0006 💎");
-      }).catch((err) => {
-        alert("Quảng cáo Adsgram bị bỏ dở hoặc chưa tải xong!");
-      });
+      alert("Đã gửi yêu cầu rút tiền thành công!");
     }
   </script>
 </body>
