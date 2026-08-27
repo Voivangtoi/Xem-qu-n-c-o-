@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta name="monetag" content="3108df7f481afc51a165ab7a20f266dc">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>PaidZ Mini App</title>
-</head>
+  
+  <!-- Thẻ xác minh Monetag của bạn -->
+  <meta name="monetag" content="3108df7f481afc51a165ab7a20f266dc">
+
   <!-- SDK Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
@@ -237,13 +239,10 @@
         return;
       }
 
-      // Lấy thông tin User Telegram nếu có
       let user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : { id: "Ẩn danh", username: "khách" };
       let userName = user.username ? `@${user.username}` : user.first_name || user.id;
-
       let amount = currentBalance.toFixed(4);
 
-      // Bot Token & Admin Chat ID
       let botToken = "8946115398:AAERZIkvF4cQpU-9d8xw97s4zFL0VvVMLTw";
       let adminChatId = "7496441289";
 
@@ -254,7 +253,6 @@
                     `- Địa chỉ ví: \`${wallet}\`\n\n` +
                     `Hãy kiểm tra và duyệt cho người dùng nhé!`;
 
-      // Gửi yêu cầu qua Telegram Bot API về cho Admin
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -265,7 +263,6 @@
         })
       }).catch(err => console.log(err));
 
-      // Reset số dư về 0 sau khi đặt lệnh thành công
       currentBalance = 0;
       document.getElementById('user-balance').innerText = "0.0000";
       closeWithdrawModal();
@@ -289,22 +286,38 @@
 
           alert("Thành công! Bạn được cộng +0.0004 💎");
         }).catch((err) => {
-          alert("Quảng cáo bị bỏ dở hoặc chưa tải xong!");
+          alert("Quảng cáo Monetag chưa sẵn sàng hoặc bị đóng!");
         });
       } else {
-        alert("Quảng cáo Monetag đang nạp, vui lòng bấm lại sau 3 giây!");
+        alert("Đang tải quảng cáo Monetag, vui lòng thử lại sau 3 giây!");
       }
     }
 
-    // Khởi tạo Adsgram với Block ID bot-44816
-    const adsgram = window.Adsgram ? window.Adsgram.init({ blockId: "bot-44816" }) : null;
+    // Khởi tạo Adsgram an toàn
+    let adsgram = null;
+    try {
+      if (window.Adsgram) {
+        adsgram = window.Adsgram.init({ blockId: "bot-44816" });
+      }
+    } catch (e) {
+      console.log("Adsgram init error:", e);
+    }
 
     // Xử lý xem quảng cáo Adsgram
     function watchAdsgramAd() {
       if (!adsgram) {
-        alert("Adsgram chưa sẵn sàng, vui lòng thử lại sau!");
+        try {
+          if (window.Adsgram) {
+            adsgram = window.Adsgram.init({ blockId: "bot-44816" });
+          }
+        } catch(e) {}
+      }
+
+      if (!adsgram) {
+        alert("Thư viện Adsgram chưa sẵn sàng, hãy kiểm tra lại kết nối mạng!");
         return;
       }
+
       adsgram.show().then(() => {
         currentBalance += 0.0006;
         currentViews += 1;
@@ -319,7 +332,7 @@
 
         alert("Thành công! Bạn được cộng +0.0006 💎");
       }).catch((err) => {
-        alert("Quảng cáo bị bỏ dở hoặc chưa tải xong!");
+        alert("Quảng cáo Adsgram bị bỏ dở hoặc chưa tải xong!");
       });
     }
   </script>
