@@ -1,236 +1,696 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nhà Máy In Giấy</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#b45309">
+  <title>Nhà Máy In Giấy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      background: #f7f4ee;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      justify-content: center;
+    }
+
+    #initial-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 24px;
+      background: #fffaf0;
+      color: #78350f;
+      transition: opacity .35s ease, visibility .35s ease;
+    }
+
+    #initial-loader.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #f59e0b;
+      color: white;
+      box-shadow: 0 5px 18px rgba(120,53,15,.22);
+    }
+
+    .loader-logo svg {
+      width: 30px;
+      height: 30px;
+      animation: spin 1.2s linear infinite;
+    }
+
+    .loader-title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .progress-container {
+      width: min(280px, 82vw);
+      height: 9px;
+      border-radius: 99px;
+      overflow: hidden;
+      background: #fde68a;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: #f59e0b;
+      transition: width .12s linear;
+    }
+
+    .progress-text {
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    #app-content {
+      width: 100%;
+      max-width: 480px;
+      height: 100dvh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      background: #fffdf8;
+      box-shadow: 0 0 28px rgba(0,0,0,.12);
+    }
+
+    .wood-header {
+      flex: 0 0 auto;
+      background: linear-gradient(135deg, #b45309, #c45b06 55%, #a74605);
+      color: white;
+      min-height: 66px;
+    }
+
+    #app-content > main {
+      min-height: 0;
+      flex: 1 1 auto;
+      width: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tab-content {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .wood-panel {
+      background:
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,.07) 0,
+          rgba(255,255,255,.07) 10px,
+          rgba(0,0,0,.035) 10px,
+          rgba(0,0,0,.035) 20px
+        ),
+        linear-gradient(135deg, #f59e0b, #d97706);
+      border: 4px solid #78350f;
+      border-radius: 20px;
+      box-shadow: 0 7px 0 #78350f, 0 10px 18px rgba(120,53,15,.16);
+    }
+
+    .hidden-tab { display: none !important; }
+
+    nav {
+      flex: 0 0 auto;
+      position: relative !important;
+      left: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-height: 78px;
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
+    }
+
+    nav .nav-btn {
+      min-width: 0;
+      flex: 1 1 20%;
+      max-width: 20%;
+      overflow: hidden;
+    }
+
+    nav span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    #toast {
+      max-width: calc(100vw - 32px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    input, select, button {
+      max-width: 100%;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(120%); }
+    }
+
+    .animate-shimmer {
+      animation: shimmer 1.7s infinite;
+    }
+
+    .gear-icon {
+      animation: spin 3s linear infinite;
+      animation-play-state: paused;
+    }
+
+    #printer-machine {
+      max-width: 100%;
+      overflow: visible;
+    }
+
+    @media (max-width: 380px) {
+      #app-content { max-width: 100%; }
+      .tab-content { padding-left: 12px !important; padding-right: 12px !important; }
+      #printer-machine { transform: scale(.88); transform-origin: center; margin-top: -8px; margin-bottom: -10px; }
+      .wood-panel { border-width: 3px; }
+      nav { min-height: 72px; }
+      nav .nav-btn { padding-left: 2px !important; padding-right: 2px !important; }
+      nav .nav-btn > div { padding: 6px !important; }
+      nav span { font-size: 8px !important; }
+    }
+
+    @media (min-width: 481px) {
+      body { padding: 0; }
+    }
+  </style>
+
+  <!-- Giữ lại JS/CSS gốc của ứng dụng nếu đang chạy trên server -->
   <script type="module" crossorigin src="/assets/index-Dk0Ox2jY.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-mO0Drn7S.css">
 </head>
 
-<body class="min-h-screen flex justify-center selection:bg-amber-500/30">
+<body>
+  <div id="initial-loader">
+    <div class="loader-logo">
+      <i data-lucide="settings"></i>
+    </div>
+    <h1 class="loader-title">Nhà Máy In Giấy</h1>
+    <div class="progress-container">
+      <div id="loading-bar" class="progress-bar"></div>
+    </div>
+    <div id="loading-text" class="progress-text">Đang chuẩn bị máy móc... 0%</div>
+  </div>
 
-    <div id="initial-loader">
-        <div class="loader-logo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+  <div id="app-content">
+    <header class="px-4 py-3 wood-header flex justify-between items-center z-10">
+      <div class="flex items-center min-w-0">
+        <div class="relative">
+          <img id="header-avatar" src="" alt="Avatar"
+               class="w-10 h-10 rounded-full border-2 border-amber-200 shadow-md hidden">
+          <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-amber-700 rounded-full"></div>
         </div>
-        <h1 class="loader-title">Nhà Máy In Giấy</h1>
-        
-        <div class="progress-container">
-            <div id="loading-bar" class="progress-bar"></div>
+      </div>
+
+      <div class="flex items-center gap-2 min-w-0">
+        <button id="btn-leaderboard"
+          class="p-2 bg-amber-500/20 text-amber-100 rounded-full border border-amber-400/50">
+          <i data-lucide="trophy" class="w-4 h-4"></i>
+        </button>
+
+        <div class="flex gap-2 bg-amber-900/50 px-3 py-2 rounded-full border border-amber-800 shadow-inner">
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="file-text" class="text-white w-4 h-4"></i>
+            <span class="val-banknotes font-mono font-bold text-white text-xs tabular-nums">0</span>
+          </div>
+          <div class="w-px h-4 bg-amber-700"></div>
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="settings" class="text-amber-400 w-4 h-4"></i>
+            <span class="val-gold font-mono font-bold text-amber-50 text-xs tabular-nums">0</span>
+          </div>
         </div>
-        <div id="loading-text" class="progress-text">Đang chuẩn bị máy móc... 0%</div>
+      </div>
+    </header>
+
+    <main style="background:#fffdf8;">
+      <div class="tab-content relative z-10 flex flex-col items-center p-4 space-y-6 pb-28" id="tab-home">
+
+        <div class="w-full wood-panel p-4 flex justify-between items-center">
+          <div class="min-w-0">
+            <p class="text-amber-100 text-[10px] font-bold uppercase mb-1 flex items-center gap-1">
+              <i data-lucide="zap" class="w-3 h-3"></i> Năng suất
+            </p>
+            <p class="text-white font-black text-lg tabular-nums flex items-center gap-1.5">
+              <span id="val-speed">0</span>
+              <i data-lucide="file-text" class="text-white w-4 h-4 opacity-80"></i>
+              <span class="text-[10px] text-amber-200 font-normal uppercase mt-1">/ giờ</span>
+            </p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-amber-100 text-[10px] font-bold uppercase mb-1 flex items-center justify-end gap-1">
+              <i data-lucide="shield-check" class="w-3 h-3"></i> Cấp máy in
+            </p>
+            <p class="text-white font-black text-lg">LV <span id="val-level">1</span></p>
+          </div>
+        </div>
+
+        <div class="text-center py-2 bg-white rounded-2xl px-5 border-2 border-amber-200 shadow-sm max-w-full">
+          <h2 class="text-amber-800 text-xs uppercase font-bold mb-1">Kho Giấy Trắng</h2>
+          <div class="val-banknotes text-4xl font-black text-amber-600 font-mono tracking-tight tabular-nums">0</div>
+        </div>
+
+        <div id="printer-machine" class="relative w-72 h-64 flex flex-col items-center justify-center my-2">
+          <div class="relative z-10 w-full h-full flex flex-col items-center justify-end">
+            <div class="absolute top-4 w-40 h-24 bg-gray-200 rounded-full border-4 border-gray-400 shadow-inner flex items-center justify-center overflow-hidden z-0">
+              <div class="w-full h-2 bg-gray-300 opacity-50"></div>
+              <div class="w-4 h-4 bg-gray-500 rounded-full absolute"></div>
+            </div>
+
+            <div class="relative z-10 w-56 h-32 bg-amber-500 rounded-t-2xl border-4 border-amber-700 shadow-lg flex flex-col items-center p-2">
+              <div class="w-32 h-10 bg-gray-900 rounded-lg border-2 border-gray-600 flex items-center justify-center relative overflow-hidden mb-2 shadow-inner">
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                <span id="printer-status-on" class="hidden text-green-400 text-xs font-mono font-bold items-center gap-1.5">
+                  <i data-lucide="power" class="w-3 h-3"></i>
+                  ĐANG CHẠY: <span id="val-timer">00:00:00</span>
+                </span>
+                <span id="printer-status-off" class="text-red-400 text-xs font-mono font-bold flex items-center gap-1.5">
+                  <i data-lucide="power-off" class="w-3 h-3"></i> TẠM DỪNG
+                </span>
+              </div>
+
+              <div class="absolute top-3 left-3">
+                <i data-lucide="settings" class="text-amber-800 w-5 h-5 gear-icon"></i>
+              </div>
+              <div class="absolute top-3 right-3">
+                <i data-lucide="settings" class="text-amber-800 w-5 h-5 gear-icon"></i>
+              </div>
+
+              <div class="w-48 h-8 bg-gray-400 rounded-full mt-auto border-2 border-gray-600 flex items-center justify-evenly shadow-inner overflow-hidden">
+                <div class="w-2 h-full bg-gray-500/50"></div>
+                <div class="w-2 h-full bg-gray-500/50"></div>
+                <div class="w-2 h-full bg-gray-500/50"></div>
+                <div class="w-2 h-full bg-gray-500/50"></div>
+                <div class="w-2 h-full bg-gray-500/50"></div>
+              </div>
+            </div>
+
+            <div class="relative z-20 w-48 h-12 bg-amber-700 border-x-4 border-b-4 border-amber-900 rounded-b-xl flex justify-center overflow-hidden shadow-xl">
+              <div id="money-particles" class="hidden absolute top-0 w-full h-full flex justify-center">
+                <div class="absolute top-0 w-20 h-10 bg-white rounded border border-gray-300 shadow-md"></div>
+                <div class="absolute top-0 w-20 h-10 bg-white rounded border border-gray-300 shadow-md"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-full grid grid-cols-2 gap-3 mt-2">
+          <div class="flex flex-col gap-1 min-w-0">
+            <button id="btn-toggle-print"
+              class="py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 bg-green-500 text-white shadow-[0_4px_0_#166534] active:translate-y-[4px] active:shadow-none">
+              <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+              <span id="txt-toggle-print">BẬT MÁY</span>
+            </button>
+            <span class="text-[10px] text-amber-800 text-center font-bold bg-white/70 rounded p-1">Hoạt động liên tục 6h</span>
+          </div>
+
+          <div class="flex flex-col gap-1 min-w-0">
+            <button id="btn-upgrade"
+              class="py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 bg-amber-500 text-white shadow-[0_4px_0_#92400e] active:translate-y-[4px] active:shadow-none">
+              <i data-lucide="wrench" class="w-4 h-4"></i> NÂNG CẤP
+            </button>
+            <span class="text-[10px] text-amber-800 text-center font-bold bg-white/70 rounded p-1">
+              Phí: <span id="upgrade-cost">25,000</span>
+              <i data-lucide="settings" class="w-2.5 h-2.5 inline text-amber-600"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-exchange" class="tab-content hidden-tab p-5 space-y-6 pb-28">
+        <h2 class="text-xl font-black text-amber-900 flex items-center gap-2">
+          <i data-lucide="refresh-cw" class="text-amber-600 w-6 h-6"></i> Xưởng Tái Chế
+        </h2>
+
+        <div class="bg-white p-5 rounded-2xl border-2 border-amber-200 shadow-md">
+          <label class="text-xs font-bold text-amber-800 mb-1 block">Khối lượng Giấy (Đổi lấy Bánh răng)</label>
+          <div class="relative">
+            <input type="number" id="input-exchange" placeholder="Nhập số lượng..."
+              class="w-full bg-amber-50 border-2 border-amber-200 rounded-xl p-3 text-amber-900 text-sm font-mono">
+            <button id="btn-max-exchange"
+              class="absolute right-2 top-2 text-[10px] bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg font-bold">TẤT CẢ</button>
+          </div>
+          <p class="text-[10px] text-amber-600 mt-1">* Tỷ giá: 125 Giấy = 1 Bánh răng</p>
+
+          <div class="flex items-center justify-center text-amber-400 py-3">
+            <i data-lucide="arrow-down-circle" class="w-6 h-6"></i>
+          </div>
+
+          <label class="text-xs font-bold text-amber-800 mb-1 block">Bánh răng nhận được</label>
+          <div class="w-full bg-amber-100 border-2 border-amber-200 rounded-xl p-3 text-amber-600 font-black text-xl flex items-center justify-center gap-2">
+            <span id="val-exchange-receive" class="font-mono tabular-nums">0</span>
+            <i data-lucide="settings" class="w-5 h-5"></i>
+          </div>
+
+          <button id="btn-do-exchange"
+            class="w-full py-3 bg-amber-500 text-white rounded-xl font-black text-sm shadow-[0_4px_0_#b45309] mt-4">
+            TIẾN HÀNH ĐỔI
+          </button>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border-2 border-blue-200 shadow-md">
+          <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2 text-sm">
+            <i data-lucide="ticket" class="text-blue-500 w-5 h-5"></i> Phiếu Vật Tư (Giftcode)
+          </h3>
+          <div class="flex gap-2">
+            <input type="text" id="input-giftcode" placeholder="Nhập mã..."
+              class="flex-1 min-w-0 bg-blue-50 border-2 border-blue-200 rounded-xl px-3 py-2 text-blue-900 text-sm uppercase font-bold">
+            <button id="btn-use-giftcode"
+              class="shrink-0 bg-blue-500 text-white px-4 rounded-xl font-bold text-sm">
+              Sử dụng
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-tasks" class="tab-content hidden-tab p-5 space-y-6 pb-28">
+        <h2 class="text-xl font-black text-amber-900 flex items-center gap-2">
+          <i data-lucide="clipboard-list" class="text-amber-600 w-6 h-6"></i> Công Việc Bổ Sung
+        </h2>
+
+        <div class="bg-indigo-50 border-2 border-indigo-200 p-4 rounded-2xl shadow-md">
+          <div class="flex justify-between items-center mb-4 gap-2">
+            <h3 class="font-bold text-indigo-900 text-sm">Xem Khảo Sát Kỹ Thuật</h3>
+            <span id="ad-timer" class="hidden text-indigo-600 text-xs font-mono font-black">00:00:00</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <button id="btn-ad-banknote" class="ad-btn p-3 rounded-xl border-2 bg-white border-amber-200 flex flex-col items-center gap-1">
+              <i data-lucide="file-text" class="text-amber-600 w-6 h-6"></i>
+              <span class="text-amber-900 font-bold text-xs">Nhận Giấy</span>
+              <span class="text-[10px] font-bold text-amber-500">+100,000</span>
+            </button>
+            <button id="btn-ad-gold" class="ad-btn p-3 rounded-xl border-2 bg-white border-blue-200 flex flex-col items-center gap-1">
+              <i data-lucide="settings" class="text-blue-500 w-6 h-6"></i>
+              <span class="text-blue-900 font-bold text-xs">Nhận Bánh răng</span>
+              <span class="text-[10px] font-bold text-blue-500">+500</span>
+            </button>
+          </div>
+          <p class="text-[10px] text-center text-indigo-700 font-bold mt-3">⚠️ Xem khảo sát tầm 5s để nhận thưởng!</p>
+          <p class="text-[10px] text-center text-indigo-500 mt-1">* Có thể nhận lại sau 15 phút</p>
+        </div>
+
+        <div id="task-list" class="space-y-3"></div>
+      </div>
+
+      <div id="tab-referral" class="tab-content hidden-tab p-5 space-y-6 pb-28">
+        <h2 class="text-xl font-black text-amber-900 flex items-center gap-2">
+          <i data-lucide="users" class="text-amber-600 w-6 h-6"></i> Tuyển Dụng Công Nhân
+        </h2>
+
+        <div class="bg-white rounded-2xl border-2 border-amber-200 p-5 text-center shadow-md">
+          <h3 class="text-lg font-black text-amber-900 mb-3">Phát Tờ Rơi Tuyển Dụng</h3>
+
+          <div class="bg-amber-50 p-2 rounded-xl flex items-center gap-2 border-2 border-amber-200 mb-4">
+            <span id="ref-link-display" class="text-amber-700 text-xs font-mono truncate px-2 flex-1 min-w-0">Đang tạo liên kết...</span>
+            <button id="btn-copy-ref-icon" class="shrink-0 text-amber-600 bg-amber-200 p-2 rounded-lg">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="flex justify-between items-center mb-4 px-4 bg-amber-100 rounded-xl py-2 border border-amber-200">
+            <span class="text-xs font-bold text-amber-800 uppercase">Công nhân đã tuyển:</span>
+            <span class="text-xl font-black text-amber-600" id="val-referrals">0</span>
+          </div>
+
+          <button id="btn-copy-ref" class="w-full py-3 bg-amber-500 text-white rounded-xl font-black text-sm mb-4">
+            SAO CHÉP LIÊN KẾT
+          </button>
+
+          <div class="text-left bg-green-50 rounded-lg p-3 border-2 border-green-200">
+            <p class="text-xs text-green-800 mb-2 font-bold uppercase">Thưởng nóng mỗi lượt:</p>
+            <p class="text-sm font-black text-green-600">+ 1,500,000 Giấy</p>
+            <p class="text-sm font-black text-amber-600 mt-1">+ 5,000 Bánh răng</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-withdraw" class="tab-content hidden-tab p-5 space-y-6 pb-28">
+        <h2 class="text-xl font-black text-amber-900 flex items-center gap-2">
+          <i data-lucide="truck" class="text-amber-600 w-6 h-6"></i> Xuất Xưởng Thành Phẩm
+        </h2>
+
+        <div class="bg-white p-5 rounded-2xl border-2 border-amber-200 shadow-md space-y-4">
+          <div>
+            <label class="text-[10px] font-bold uppercase text-amber-800 mb-1 block">Tên Đối Tác (Ngân hàng)</label>
+            <select id="input-bank-name" class="w-full bg-amber-50 border-2 border-amber-200 rounded-xl py-2.5 px-3 text-amber-900 font-bold text-sm">
+              <option value="" disabled selected>Chọn ngân hàng...</option>
+              <option value="MB">MB Bank</option>
+              <option value="VCB">Vietcombank</option>
+              <option value="TCB">Techcombank</option>
+              <option value="ACB">ACB</option>
+              <option value="ICB">VietinBank</option>
+              <option value="BIDV">BIDV</option>
+              <option value="TPB">TPBank</option>
+              <option value="VPB">VPBank</option>
+              <option value="VBA">Agribank</option>
+              <option value="NAB">Nam Á Bank</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold uppercase text-amber-800 mb-1 block">Mã Hợp Đồng (STK)</label>
+            <input type="number" id="input-bank-acc" placeholder="Nhập số tài khoản..."
+              class="w-full bg-amber-50 border-2 border-amber-200 rounded-xl py-2.5 px-3 text-amber-900 font-bold text-sm">
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold uppercase text-amber-800 mb-1 block">Người Đại Diện (Tên TK)</label>
+            <input type="text" id="input-bank-owner" placeholder="NGUYEN VAN A"
+              class="w-full bg-amber-50 border-2 border-amber-200 rounded-xl py-2.5 px-3 text-amber-900 font-bold text-sm uppercase">
+          </div>
+
+          <div class="pt-4 border-t-2 border-dashed border-amber-200">
+            <label class="text-[10px] font-bold uppercase text-amber-800 mb-1 block">Khối lượng Giấy muốn xuất</label>
+            <div class="relative">
+              <input type="number" id="input-withdraw" placeholder="0"
+                class="w-full bg-amber-50 border-2 border-amber-200 rounded-xl p-3 text-green-600 font-black font-mono text-lg">
+              <button id="btn-max-withdraw"
+                class="absolute right-2 top-2 text-[10px] bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg font-bold">TẤT CẢ</button>
+            </div>
+
+            <p class="text-[10px] text-amber-600 font-medium mt-1">
+              * Tối thiểu: 55,555,555 Giấy = 5,000 VNĐ
+            </p>
+
+            <div class="flex justify-between items-center mt-3 bg-green-50 p-3 rounded-xl border-2 border-green-200">
+              <span class="text-xs text-green-800 font-bold">Giá trị quy đổi:</span>
+              <span id="val-withdraw-vnd" class="text-lg font-black text-green-600">0 VNĐ</span>
+            </div>
+          </div>
+
+          <button id="btn-do-withdraw"
+            class="w-full py-3.5 bg-green-500 text-white rounded-xl font-black text-sm shadow-[0_4px_0_#166534]">
+            XÁC NHẬN XUẤT XƯỞNG
+          </button>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 shadow-md">
+          <h3 class="text-xs font-black text-amber-800 mb-3 uppercase flex items-center gap-1 border-b-2 border-amber-100 pb-2">
+            <i data-lucide="history" class="w-4 h-4"></i> Lịch sử xuất hàng
+          </h3>
+          <div class="space-y-3" id="withdraw-history"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="toast"
+      class="hidden fixed top-16 left-1/2 -translate-x-1/2 bg-white text-amber-900 px-5 py-2.5 rounded-xl shadow-lg border-2 border-amber-200 z-50 font-bold whitespace-nowrap text-xs">
     </div>
 
-    <div id="app-content" class="w-full max-w-md flex-col h-screen relative shadow-2xl overflow-hidden">
-        
-        <header class="px-5 py-3 wood-header flex justify-between items-center z-10 sticky top-0">
-            <div class="flex items-center">
-                <div class="relative">
-                    <img id="header-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-amber-200 shadow-md hidden">
-                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-amber-700 rounded-full"></div>
-                </div>
-            </div>
+    <nav class="bg-white border-t-2 border-amber-200 flex justify-around items-center pt-2 px-1 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] rounded-t-3xl">
+      <button class="nav-btn flex flex-col items-center justify-center p-1 space-y-1 text-amber-600" data-target="tab-home">
+        <div class="p-2 bg-amber-100 rounded-full mb-1"><i data-lucide="home" class="w-5 h-5"></i></div>
+        <span class="text-[9px] font-black uppercase">Nhà Máy</span>
+      </button>
 
-            <div class="flex items-center gap-3">
-                <button id="btn-leaderboard" class="p-1.5 bg-amber-500/20 text-amber-100 rounded-full border border-amber-400/50 hover:bg-amber-500/40 transition-colors shadow-inner">
-                    <i data-lucide="trophy" class="w-4 h-4"></i>
-                </button>
+      <button class="nav-btn flex flex-col items-center justify-center p-1 space-y-1 text-gray-400" data-target="tab-exchange">
+        <div class="p-2 rounded-full mb-1"><i data-lucide="refresh-cw" class="w-5 h-5"></i></div>
+        <span class="text-[9px] font-black uppercase">Tái Chế</span>
+      </button>
 
-                <div class="flex gap-3 bg-amber-900/50 px-3 py-1.5 rounded-full border border-amber-800 shadow-inner">
-                   <div class="flex items-center gap-1.5">
-                     <i data-lucide="file-text" class="text-white w-3.5 h-3.5 drop-shadow"></i>
-                     <span class="val-banknotes font-mono font-bold text-white text-xs tabular-nums">0</span>
-                   </div>
-                   <div class="w-[1px] h-4 bg-amber-700"></div>
-                   <div class="flex items-center gap-1.5">
-                     <i data-lucide="settings" class="text-amber-400 w-3.5 h-3.5"></i>
-                     <span class="val-gold font-mono font-bold text-amber-50 text-xs tabular-nums">0</span>
-                   </div>
-                </div>
-            </div>
-        </header>
+      <button class="nav-btn flex flex-col items-center justify-center p-1 space-y-1 text-gray-400" data-target="tab-tasks">
+        <div class="p-2 rounded-full mb-1"><i data-lucide="clipboard-list" class="w-5 h-5"></i></div>
+        <span class="text-[9px] font-black uppercase">Công Việc</span>
+      </button>
 
-        <main class="flex-1 overflow-y-auto scrollbar-hide relative" style="background-image: url('image_1c9aa5.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
-            <div class="absolute inset-0 bg-white/70 backdrop-blur-sm z-0"></div>
-            
-            <div id="tab-home" class="tab-content relative z-10 flex flex-col items-center p-4 space-y-6 animate-fade-in pb-24">
-                
-                <div class="w-full wood-panel p-4 flex justify-between items-center">
-                  <div>
-                    <p class="text-amber-100 text-[10px] font-bold uppercase mb-1 flex items-center gap-1">
-                        <i data-lucide="zap" class="w-3 h-3"></i> Năng suất
-                    </p>
-                    <p class="text-white font-black text-lg tabular-nums flex items-center gap-1.5">
-                        <span id="val-speed">0</span>
-                        <i data-lucide="file-text" class="text-white w-4 h-4 opacity-80"></i>
-                        <span class="text-[10px] text-amber-200 font-normal uppercase mt-1">/ giờ</span>
-                    </p>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-amber-100 text-[10px] font-bold uppercase mb-1 flex items-center justify-end gap-1">
-                        <i data-lucide="shield-check" class="w-3 h-3"></i> Cấp máy in
-                    </p>
-                    <p class="text-white font-black text-lg">LV <span id="val-level">1</span></p>
-                  </div>
-                </div>
-          
-                <div class="text-center py-2 bg-white/80 rounded-2xl px-6 border-2 border-amber-200 shadow-sm backdrop-blur-md">
-                  <h2 class="text-amber-800 text-xs uppercase font-bold mb-1">Kho Giấy Trắng</h2>
-                  <div class="val-banknotes text-4xl font-black text-amber-600 font-mono tracking-tight tabular-nums drop-shadow-sm">0</div>
-                </div>
-          
-                <div id="printer-machine" class="relative w-72 h-64 flex flex-col items-center justify-center my-2 transition-transform">
-                  
-                  <div class="relative z-10 w-full h-full flex flex-col items-center justify-end">
-                    
-                    <div class="absolute top-4 w-40 h-24 bg-gray-200 rounded-full border-4 border-gray-400 shadow-inner flex items-center justify-center overflow-hidden z-0">
-                        <div class="w-full h-2 bg-gray-300 opacity-50 my-1"></div>
-                        <div class="w-4 h-4 bg-gray-500 rounded-full absolute"></div>
-                    </div>
+      <button class="nav-btn flex flex-col items-center justify-center p-1 space-y-1 text-gray-400" data-target="tab-referral">
+        <div class="p-2 rounded-full mb-1"><i data-lucide="users" class="w-5 h-5"></i></div>
+        <span class="text-[9px] font-black uppercase">Tuyển Dụng</span>
+      </button>
 
-                    <div class="relative z-10 w-56 h-32 bg-amber-500 rounded-t-2xl border-4 border-amber-700 shadow-lg flex flex-col items-center p-2">
-                        
-                        <div class="w-32 h-10 bg-gray-900 rounded-lg border-2 border-gray-600 flex items-center justify-center relative overflow-hidden mb-2 shadow-inner">
-                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
-                            <span id="printer-status-on" class="hidden text-green-400 text-xs font-mono font-bold flex items-center gap-1.5">
-                                <i data-lucide="power" class="w-3 h-3 animate-pulse"></i> ĐANG CHẠY: <span id="val-timer">00:00:00</span>
-                            </span>
-                            <span id="printer-status-off" class="text-red-400 text-xs font-mono font-bold flex items-center gap-1.5">
-                                <i data-lucide="power-off" class="w-3 h-3"></i> TẠM DỪNG
-                            </span>
-                        </div>
+      <button class="nav-btn flex flex-col items-center justify-center p-1 space-y-1 text-gray-400" data-target="tab-withdraw">
+        <div class="p-2 rounded-full mb-1"><i data-lucide="truck" class="w-5 h-5"></i></div>
+        <span class="text-[9px] font-black uppercase">Xuất Xưởng</span>
+      </button>
+    </nav>
 
-                        <div class="absolute top-3 left-3 flex gap-1">
-                            <i data-lucide="settings" class="text-amber-800 w-5 h-5 gear-icon"></i>
-                        </div>
-                        <div class="absolute top-3 right-3 flex gap-1">
-                            <i data-lucide="settings" class="text-amber-800 w-5 h-5 gear-icon"></i>
-                        </div>
-
-                        <div class="w-48 h-8 bg-gray-400 rounded-full mt-auto border-2 border-gray-600 flex items-center justify-evenly shadow-inner overflow-hidden">
-                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
-                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
-                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
-                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
-                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
-                        </div>
-                    </div>
-
-                    <div class="relative z-20 w-48 h-12 bg-amber-700 border-x-4 border-b-4 border-amber-900 rounded-b-xl flex justify-center perspective-1000 overflow-hidden shadow-xl">
-                        <div id="money-particles" class="hidden absolute top-0 w-full h-full flex justify-center">
-                            <div class="paper-sheet absolute top-0 w-20 h-10 bg-white rounded border border-gray-300 shadow-md"></div>
-                            <div class="paper-sheet absolute top-0 w-20 h-10 bg-white rounded border border-gray-300 shadow-md" style="animation-delay: 0.4s"></div>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <button onclick="xemQuangCao()" class="mt-4 w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-3 rounded-xl border-b-4 border-amber-700 active:border-b-0 active:translate-y-1 transition-all shadow-lg flex items-center justify-center gap-2">
-                    <i data-lucide="play-circle" class="w-5 h-5"></i>
-                    XEM QUẢNG CÁO (Thưởng Giấy)
-                </button>
-            </div>
-        </main>
-        
-        <nav class="flex absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 z-20 shadow-lg">
-            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-amber-600" data-target="tab-home">
-                <div class="p-2 bg-amber-100 rounded-full mb-1 nav-icon-bg">
-                    <i data-lucide="home" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
-                </div>
-                <span class="text-[9px] font-black tracking-wide uppercase">Nhà Máy</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-gray-400 hover:text-amber-500" data-target="tab-exchange">
-                <div class="p-2 rounded-full mb-1 nav-icon-bg transition-colors">
-                    <i data-lucide="refresh-cw" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
-                </div>
-                <span class="text-[9px] font-black tracking-wide uppercase">Tái Chế</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-gray-400 hover:text-amber-500" data-target="tab-tasks">
-                <div class="p-2 rounded-full mb-1 nav-icon-bg transition-colors">
-                    <i data-lucide="clipboard-list" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
-                </div>
-                <span class="text-[9px] font-black tracking-wide uppercase">Công Việc</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-gray-400 hover:text-amber-500" data-target="tab-referral">
-                <div class="p-2 rounded-full mb-1 nav-icon-bg transition-colors">
-                    <i data-lucide="users" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
-                </div>
-                <span class="text-[9px] font-black tracking-wide uppercase">Tuyển Dụng</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-gray-400 hover:text-amber-500" data-target="tab-withdraw">
-                <div class="p-2 rounded-full mb-1 nav-icon-bg transition-colors">
-                    <i data-lucide="truck" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
-                </div>
-                <span class="text-[9px] font-black tracking-wide uppercase">Xuất Xưởng</span>
-            </button>
-        </nav>
-        
-        <div id="leaderboard-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div class="modal-overlay absolute inset-0" id="leaderboard-backdrop"></div>
-            
-            <div class="relative bg-amber-50 border-4 border-amber-600 rounded-3xl w-full max-w-sm overflow-hidden flex flex-col max-h-[85vh] shadow-2xl animate-fade-in">
-                <div class="p-4 border-b-4 border-amber-600 flex justify-between items-center wood-header z-10">
-                    <h2 class="text-lg font-black text-amber-50 flex items-center gap-2">
-                        <i data-lucide="award" class="text-yellow-300 w-6 h-6"></i> BẢNG VINH DANH
-                    </h2>
-                    <button id="btn-close-leaderboard" class="text-amber-200 hover:text-white p-1 bg-amber-800 rounded-full">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-
-                <div class="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide bg-amber-50" id="leaderboard-list"></div>
-
-                <div class="bg-amber-100 border-t-4 border-amber-300 p-4 flex items-center justify-between sticky bottom-0 z-10">
-                    <div class="flex items-center gap-3">
-                        <img id="lb-me-avatar" src="" alt="Avatar" class="w-12 h-12 rounded-full border-4 border-amber-400 hidden shadow-md">
-                        <div>
-                            <p id="lb-me-name" class="text-amber-900 font-black text-sm">Đang tải...</p>
-                            <p class="text-amber-700 text-xs font-bold">LV <span id="lb-me-level" class="text-amber-600">0</span></p>
-                        </div>
-                    </div>
-                    <div class="text-right bg-white px-3 py-1.5 rounded-xl border-2 border-amber-200 shadow-sm">
-                        <p class="text-[10px] text-amber-500 uppercase font-bold">Thứ hạng</p>
-                        <p id="lb-my-rank" class="text-xl font-black text-amber-600 tabular-nums">---</p>
-                    </div>
-                </div>
-            </div>
+    <div id="leaderboard-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/50" id="leaderboard-backdrop"></div>
+      <div class="relative bg-amber-50 border-4 border-amber-600 rounded-3xl w-full max-w-sm overflow-hidden flex flex-col max-h-[85vh] shadow-2xl">
+        <div class="p-4 flex justify-between items-center wood-header">
+          <h2 class="text-lg font-black text-white">🏆 BẢNG VINH DANH</h2>
+          <button id="btn-close-leaderboard" class="text-white p-1 bg-amber-800 rounded-full">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
         </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-3" id="leaderboard-list"></div>
+        <div class="bg-amber-100 border-t-4 border-amber-300 p-4 flex items-center justify-between">
+          <div>
+            <p id="lb-me-name" class="text-amber-900 font-black text-sm">Đang tải...</p>
+            <p class="text-amber-700 text-xs font-bold">LV <span id="lb-me-level">0</span></p>
+          </div>
+          <div class="text-right bg-white px-3 py-1.5 rounded-xl border-2 border-amber-200">
+            <p class="text-[10px] text-amber-500 uppercase font-bold">Thứ hạng</p>
+            <p id="lb-my-rank" class="text-xl font-black text-amber-600">---</p>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='11673272' data-sdk='show_11673272'></script>
-    
-    <script>
-        function xemQuangCao() {
-            let userId = "guest_user";
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
-                userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
-            }
+  </div>
 
-            if (typeof show_11673272 === 'function') {
-                show_11673272({ type: 'pop', ymid: userId })
-                    .then(() => {
-                        console.log("Xem quảng cáo thành công!");
-                        if (window.Telegram.WebApp.HapticFeedback) {
-                            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                        }
-                        alert("Tuyệt vời! Bạn đã nhận được thưởng.");
-                    })
-                    .catch((err) => {
-                        console.error("Chưa thể mở quảng cáo:", err);
-                        if (window.Telegram.WebApp.HapticFeedback) {
-                            window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
-                        }
-                    });
-            } else {
-                alert("Hệ thống quảng cáo đang kết nối, vui lòng bấm lại sau ít giây!");
-            }
+  <script>
+    // Icon
+    if (window.lucide) lucide.createIcons();
+
+    // Loader độc lập: không để loader che giao diện nếu JS ứng dụng không phản hồi.
+    (() => {
+      const loader = document.getElementById('initial-loader');
+      const bar = document.getElementById('loading-bar');
+      const text = document.getElementById('loading-text');
+      let progress = 0;
+
+      const timer = setInterval(() => {
+        progress = Math.min(progress + Math.floor(Math.random() * 12) + 5, 100);
+        if (bar) bar.style.width = progress + '%';
+        if (text) text.textContent = 'Đang chuẩn bị máy móc... ' + progress + '%';
+
+        if (progress >= 100) {
+          clearInterval(timer);
+          setTimeout(() => loader && loader.classList.add('is-hidden'), 180);
         }
-    </script>
+      }, 90);
+
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          if (bar) bar.style.width = '100%';
+          if (text) text.textContent = 'Đang chuẩn bị máy móc... 100%';
+          setTimeout(() => loader && loader.classList.add('is-hidden'), 150);
+        }, 250);
+      });
+    })();
+
+    // Điều hướng tab cơ bản để file vẫn có giao diện khi JS ứng dụng ngoài chưa tải.
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden-tab'));
+        const el = document.getElementById(target);
+        if (el) el.classList.remove('hidden-tab');
+
+        document.querySelectorAll('.nav-btn').forEach(b => {
+          b.classList.remove('text-amber-600');
+          b.classList.add('text-gray-400');
+          const bg = b.querySelector('div');
+          if (bg) bg.classList.remove('bg-amber-100');
+        });
+
+        btn.classList.remove('text-gray-400');
+        btn.classList.add('text-amber-600');
+        const bg = btn.querySelector('div');
+        if (bg) bg.classList.add('bg-amber-100');
+
+        const main = document.querySelector('#app-content > main');
+        if (main) main.scrollTop = 0;
+      });
+    });
+
+    // Quy đổi giấy -> bánh răng.
+    const exchangeInput = document.getElementById('input-exchange');
+    const exchangeReceive = document.getElementById('val-exchange-receive');
+    if (exchangeInput && exchangeReceive) {
+      exchangeInput.addEventListener('input', () => {
+        const value = Math.max(0, Number(exchangeInput.value) || 0);
+        exchangeReceive.textContent = Math.floor(value / 125).toLocaleString('vi-VN');
+      });
+    }
+
+    // Quy đổi giấy -> VNĐ theo mức hiển thị của giao diện.
+    const withdrawInput = document.getElementById('input-withdraw');
+    const withdrawVnd = document.getElementById('val-withdraw-vnd');
+    if (withdrawInput && withdrawVnd) {
+      withdrawInput.addEventListener('input', () => {
+        const value = Math.max(0, Number(withdrawInput.value) || 0);
+        const vnd = value * 5000 / 55555555;
+        withdrawVnd.textContent = Math.floor(vnd).toLocaleString('vi-VN') + ' VNĐ';
+      });
+    }
+
+    document.getElementById('btn-max-exchange')?.addEventListener('click', () => {
+      const bank = document.querySelector('.val-banknotes');
+      if (exchangeInput && bank) {
+        exchangeInput.value = (bank.textContent || '0').replace(/[^\d]/g, '');
+        exchangeInput.dispatchEvent(new Event('input'));
+      }
+    });
+
+    document.getElementById('btn-max-withdraw')?.addEventListener('click', () => {
+      const bank = document.querySelector('.val-banknotes');
+      if (withdrawInput && bank) {
+        withdrawInput.value = (bank.textContent || '0').replace(/[^\d]/g, '');
+        withdrawInput.dispatchEvent(new Event('input'));
+      }
+    });
+  </script>
+
+  <!-- Các SDK quảng cáo gốc, giữ nguyên nếu ứng dụng cần -->
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+  <script src="//libtl.com/sdk.js" data-zone="11335025" data-sdk="show_11335025"></script>
 </body>
 </html>
