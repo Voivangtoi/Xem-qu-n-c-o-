@@ -8,12 +8,9 @@
   <meta name="monetag" content="3108df7f481afc51a165ab7a20f266dc">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
-  <!-- SDK Monetag chính -->
-  <script src='//libtl.com/sdk.js' data-zone='11643689' data-sdk='show_11643689'></script>
-  
-  <!-- SDK Monetag Rewarded Popup -->
+  <!-- SDK Monetag Main Zone (Rewarded Popup) -->
   <script src='//libtl.com/sdk.js' data-zone='11664284' data-sdk='show_11664284'></script>
-  
+  <!-- SDK Adsgram -->
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   
   <style>
@@ -148,14 +145,14 @@
     </div>
   </div>
 
-  <!-- Monetag -->
+  <!-- Monetag (Rewarded Popup) -->
   <div class="ad-card">
     <div class="ad-top">
       <div class="ad-brand">
         <div class="ad-logo logo-monetag">monetag</div>
         <div class="ad-details">
           <div class="ad-name">Monetag</div>
-          <div class="ad-desc" id="txt-monetag-desc">Xem 2 QC liên tục (Hồi 15 phút)</div>
+          <div class="ad-desc" id="txt-monetag-desc">Truy cập trang ưu đãi để nhận thưởng (Hồi 5 phút)</div>
           <div class="ad-rate">+0.0004 💎 / view</div>
         </div>
       </div>
@@ -175,20 +172,24 @@
     // --- 1. DỊCH ĐA NGÔN NGỮ ---
     const i18n = {
       vi: {
-        userId: "ID Người xem", withdrawBtn: "⇄ Rút về USDT (BEP20)", withdrawTitle: "Rút USDT (BEP20)", withdrawMin: "Tối thiểu: 0.5 USDT", enterWallet: "Nhập địa chỉ ví USDT (BEP20):", cancel: "Hủy", confirm: "Gửi Yêu Cầu", statViews: "ĐÃ XEM", unitViews: "Lượt xem", statSpeed: "TĂNG TỐC", speedVal: "1.00x Cơ bản", levelProgress: "Tiến trình cấp độ", networkTitle: "📚 Mạng Quảng Cáo", adsgramDesc: "Xem đủ thời gian video để nhận thưởng", monetagDesc: "Xem 2 QC liên tục (Hồi 15 phút)", watchBtn: "► Xem", loadingBtn: "► Đang tải...", retryBtn: "► Thử lại", navTask: "Nhiệm Vụ", navFriends: "Bạn Bè", navContest: "Cuộc Thi", navProfile: "Cá Nhân",
-        minWithdrawErr: "Số dư chưa đủ! Cần tối thiểu 0.5 USDT (BEP20).", inputWalletErr: "Vui lòng nhập địa chỉ ví USDT!", withdrawSuccess: "Đã gửi yêu cầu rút tiền thành công!"
+        userId: "ID Người xem", withdrawBtn: "⇄ Rút về USDT (BEP20)", withdrawTitle: "Rút USDT (BEP20)", withdrawMin: "Tối thiểu: 0.5 USDT", enterWallet: "Nhập địa chỉ ví USDT (BEP20):", cancel: "Hủy", confirm: "Gửi Yêu Cầu", statViews: "ĐÃ XEM", unitViews: "Lượt xem", statSpeed: "TĂNG TỐC", speedVal: "1.00x Cơ bản", levelProgress: "Tiến trình cấp độ", networkTitle: "📚 Mạng Quảng Cáo", adsgramDesc: "Xem đủ thời gian video để nhận thưởng", monetagDesc: "Truy cập trang ưu đãi để nhận thưởng (Hồi 5 phút)", watchBtn: "► Xem", loadingBtn: "► Đang tải...", navTask: "Nhiệm Vụ", navFriends: "Bạn Bè", navContest: "Cuộc Thi", navProfile: "Cá Nhân",
+        minWithdrawErr: "Số dư chưa đủ! Cần tối thiểu 0.5 USDT (BEP20).", inputWalletErr: "Vui lòng nhập địa chỉ ví USDT!", withdrawSuccess: "Đã gửi yêu cầu rút tiền thành công!",
+        adFailErr: "Không thể mở quảng cáo. Vui lòng kiểm tra kết nối mạng!"
       },
       en: {
-        userId: "Viewer ID", withdrawBtn: "⇄ Withdraw USDT (BEP20)", withdrawTitle: "Withdraw USDT (BEP20)", withdrawMin: "Minimum: 0.5 USDT", enterWallet: "Enter USDT Address (BEP20):", cancel: "Cancel", confirm: "Submit Request", statViews: "WATCHED", unitViews: "Views", statSpeed: "BOOST", speedVal: "1.00x Base", levelProgress: "Level Progress", networkTitle: "📚 Ad Networks", adsgramDesc: "Watch full video to get rewarded", monetagDesc: "Watch 2 ads in a row (15m cooldown)", watchBtn: "► Watch", loadingBtn: "► Loading...", retryBtn: "► Retry", navTask: "Tasks", navFriends: "Friends", navContest: "Contest", navProfile: "Profile",
-        minWithdrawErr: "Insufficient balance! Minimum 0.5 USDT required.", inputWalletErr: "Please enter your USDT wallet address!", withdrawSuccess: "Withdrawal request submitted successfully!"
+        userId: "Viewer ID", withdrawBtn: "⇄ Withdraw USDT (BEP20)", withdrawTitle: "Withdraw USDT (BEP20)", withdrawMin: "Minimum: 0.5 USDT", enterWallet: "Enter USDT Address (BEP20):", cancel: "Cancel", confirm: "Submit Request", statViews: "WATCHED", unitViews: "Views", statSpeed: "BOOST", speedVal: "1.00x Base", levelProgress: "Level Progress", networkTitle: "📚 Ad Networks", adsgramDesc: "Watch full video to get rewarded", monetagDesc: "Visit offer page to get rewarded (5m cooldown)", watchBtn: "► Watch", loadingBtn: "► Loading...", navTask: "Tasks", navFriends: "Friends", navContest: "Contest", navProfile: "Profile",
+        minWithdrawErr: "Insufficient balance! Minimum 0.5 USDT required.", inputWalletErr: "Please enter your USDT wallet address!", withdrawSuccess: "Withdrawal request submitted successfully!",
+        adFailErr: "Failed to open ad. Please check your network connection!"
       },
       ph: {
-        userId: "ID ng Manonood", withdrawBtn: "⇄ Mag-withdraw sa USDT (BEP20)", withdrawTitle: "Mag-withdraw ng USDT (BEP20)", withdrawMin: "Minimum: 0.5 USDT", enterWallet: "Ilagay ang USDT Address (BEP20):", cancel: "Kanselahin", confirm: "Ipadala ang Hiling", statViews: "NANOOD NA", unitViews: "Mga Panonood", statSpeed: "PABILIS", speedVal: "1.00x Base", levelProgress: "Progresyon ng Antas", networkTitle: "📚 Mga Network ng Ad", adsgramDesc: "Panoorin ang buong video para makakuha ng reward", monetagDesc: "Manood ng 2 ad (15m cooldown)", watchBtn: "► Manood", loadingBtn: "► Naglo-load...", retryBtn: "► Subukan Ulit", navTask: "Mga Gawain", navFriends: "Mga Kaibigan", navContest: "Paligsahan", navProfile: "Profile",
-        minWithdrawErr: "Kulang ang balanse! Kailangan ng minimum na 0.5 USDT.", inputWalletErr: "Mangyaring ilagay ang iyong USDT wallet address!", withdrawSuccess: "Matagumpay na naisumite ang kahilingan sa pag-withdraw!"
+        userId: "ID ng Manonood", withdrawBtn: "⇄ Mag-withdraw sa USDT (BEP20)", withdrawTitle: "Mag-withdraw ng USDT (BEP20)", withdrawMin: "Minimum: 0.5 USDT", enterWallet: "Ilagay ang USDT Address (BEP20):", cancel: "Kanselahin", confirm: "Ipadala ang Hiling", statViews: "NANOOD NA", unitViews: "Mga Panonood", statSpeed: "PABILIS", speedVal: "1.00x Base", levelProgress: "Progresyon ng Antas", networkTitle: "📚 Mga Network ng Ad", adsgramDesc: "Panoorin ang buong video para makakuha ng reward", monetagDesc: "Bisitahin ang offer page para sa reward (5m cooldown)", watchBtn: "► Manood", loadingBtn: "► Naglo-load...", navTask: "Mga Gawain", navFriends: "Mga Kaibigan", navContest: "Paligsahan", navProfile: "Profile",
+        minWithdrawErr: "Kulang ang balanse! Kailangan ng minimum na 0.5 USDT.", inputWalletErr: "Mangyaring ilagay ang iyong USDT wallet address!", withdrawSuccess: "Matagumpay na naisumite ang kahilingan sa pag-withdraw!",
+        adFailErr: "Bigo na buksan ang ad. Mangyaring kiểm tra kết nối mạng!"
       },
       ru: {
-        userId: "ID Зрителя", withdrawBtn: "⇄ Вывести USDT (BEP20)", withdrawTitle: "Вывод USDT (BEP20)", withdrawMin: "Минимум: 0.5 USDT", enterWallet: "Введите адрес USDT (BEP20):", cancel: "Отмена", confirm: "Отправить запрос", statViews: "ПРОСМОТРЕНО", unitViews: "Просмотры", statSpeed: "УСКОРЕНИЕ", speedVal: "1.00x Базовый", levelProgress: "Прогресс уровня", networkTitle: "📚 Рекламные сети", adsgramDesc: "Посмотрите видео полностью для получения награды", monetagDesc: "Смотреть 2 рекламы (Кулдаун 15м)", watchBtn: "► Смотреть", loadingBtn: "► Загрузка...", retryBtn: "► Повторить", navTask: "Задания", navFriends: "Друзья", navContest: "Конкурс", navProfile: "Профиль",
-        minWithdrawErr: "Недостаточно средств! Требуется минимум 0.5 USDT.", inputWalletErr: "Пожалуйста, введите адрес вашего USDT кошелька!", withdrawSuccess: "Запрос на вывод успешно отправлен!"
+        userId: "ID Зрителя", withdrawBtn: "⇄ Вывести USDT (BEP20)", withdrawTitle: "Вывод USDT (BEP20)", withdrawMin: "Минимум: 0.5 USDT", enterWallet: "Введите адрес USDT (BEP20):", cancel: "Отмена", confirm: "Отправить запрос", statViews: "ПРОСМОТРЕНО", unitViews: "Просмотры", statSpeed: "УСКОРЕНИЕ", speedVal: "1.00x Базовый", levelProgress: "Прогресс уровня", networkTitle: "📚 Рекламные сети", adsgramDesc: "Посмотрите видео полностью для получения награды", monetagDesc: "Перейдите на страницу предложения (Кулдаун 5м)", watchBtn: "► Смотреть", loadingBtn: "► Загрузка...", navTask: "Задания", navFriends: "Друзья", navContest: "Конкурс", navProfile: "Профиль",
+        minWithdrawErr: "Недостаточно средств! Требуется минимум 0.5 USDT.", inputWalletErr: "Пожалуйста, введите адрес вашего USDT кошелька!", withdrawSuccess: "Запрос на вывод успешно отправлен!",
+        adFailErr: "Не удалось открыть рекламу. Проверьте подключение к сети!"
       }
     };
 
@@ -245,37 +246,21 @@
 
     let currentBalance = parseFloat(localStorage.getItem(`balance_${userId}`) || "0.0000");
     let currentViews = parseInt(localStorage.getItem(`views_${userId}`) || "0");
-    
+    let isAdShowing = false;
+    const MONETAG_COOLDOWN_MS = 5 * 60 * 1000; // 5 phút cooldown
+
     window.addEventListener('load', () => {
       changeLanguage(currentLang);
       updateUI();
-      preloadMonetag();
       checkMonetagCooldown();
-
-      // --- TỰ ĐỘNG HIỆN REWARDED POPUP SAU 5 GIÂY ---
-      setTimeout(() => {
-        if (typeof show_11664284 === 'function') {
-          show_11664284('pop').then(() => {
-            congThuong(0.0004);
-          }).catch(e => {
-            console.log("Lỗi hiển thị quảng cáo popup:", e);
-          });
-        }
-      }, 5000);
     });
 
-    // --- 3. LOGIC MONETAG BANNER/INTERSTITIAL ---
-    function preloadMonetag() {
-      if (typeof show_11643689 === 'function') {
-        show_11643689({ type: 'preload', ymid: userId }).catch(() => {});
-      }
-    }
-
+    // --- 3. LOGIC MONETAG REWARDED POPUP (TỐI ƯU THEO DOCS) ---
     function checkMonetagCooldown() {
       let lastTime = localStorage.getItem(`monetag_cd_${userId}`);
       if (lastTime) {
         let diff = Date.now() - parseInt(lastTime);
-        let remaining = (15 * 60 * 1000) - diff;
+        let remaining = MONETAG_COOLDOWN_MS - diff;
         if (remaining > 0) {
           startMonetagTimer(remaining);
         }
@@ -303,44 +288,61 @@
     }
 
     function watchMonetagAd() {
-      if (typeof show_11643689 !== 'function') return;
+      if (isAdShowing) return;
 
       let btn = document.getElementById('btn-monetag');
       btn.disabled = true;
+      isAdShowing = true;
 
-      show_11643689({ ymid: userId }).then(() => {
-        setTimeout(() => {
-          show_11643689({ ymid: userId }).then(() => {
-            congThuong(0.0004);
-            localStorage.setItem(`monetag_cd_${userId}`, Date.now().toString());
-            startMonetagTimer(15 * 60 * 1000);
-          }).catch((err) => {
-            btn.disabled = false;
-            btn.innerText = i18n[currentLang].watchBtn;
-          });
-        }, 2000);
-      }).catch((err) => {
+      // Kiểm tra SDK đã sẵn sàng chưa
+      if (typeof show_11664284 === 'function') {
+        // Cú pháp chính thức: show_XXX({ type: 'pop', ymid: userId })
+        show_11664284({ type: 'pop', ymid: userId }).then(() => {
+          isAdShowing = false;
+
+          // Theo tài liệu Monetag: .then() xác nhận trang quảng cáo popup đã được mở thành công
+          congThuong(0.0004);
+
+          // Kích hoạt hồi chiêu 5 phút
+          localStorage.setItem(`monetag_cd_${userId}`, Date.now().toString());
+          startMonetagTimer(MONETAG_COOLDOWN_MS);
+
+        }).catch((err) => {
+          isAdShowing = false;
+          btn.disabled = false;
+          btn.innerText = i18n[currentLang].watchBtn;
+          console.log('Monetag Popup Error:', err);
+          alert(i18n[currentLang].adFailErr);
+        });
+      } else {
+        isAdShowing = false;
         btn.disabled = false;
         btn.innerText = i18n[currentLang].watchBtn;
-      });
+        alert(i18n[currentLang].adFailErr);
+      }
     }
 
     // --- 4. LOGIC ADSGRAM ---
     let adsgram = null;
     function watchAdsgramAd() {
+      if (isAdShowing) return;
       if (!adsgram && window.Adsgram) {
         adsgram = window.Adsgram.init({ blockId: "42178" });
       }
       if (!adsgram) return;
       
       let startTime = Date.now();
+      isAdShowing = true;
 
       adsgram.show().then(() => {
+        isAdShowing = false;
         let duration = (Date.now() - startTime) / 1000;
         if (duration >= 14.5) {
           congThuong(0.0006);
         }
-      }).catch((err) => {});
+      }).catch((err) => {
+        isAdShowing = false;
+      });
     }
 
     function congThuong(amount) {
