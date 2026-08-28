@@ -1,400 +1,236 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>PaidZ Mini App</title>
-  
-  <meta name="monetag" content="3108df7f481afc51a165ab7a20f266dc">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
-  <!-- SDK Monetag Main Zone (Rewarded Popup) -->
-  <script src='//libtl.com/sdk.js' data-zone='11664284' data-sdk='show_11664284'></script>
-  <!-- SDK Adsgram -->
-  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-  
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
-    body { background-color: #0b101d; color: #ffffff; display: flex; flex-direction: column; min-height: 100vh; padding: 16px; padding-bottom: 80px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nhà Máy In Giấy</title>
     
-    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .user-info { font-size: 13px; color: #8a99ad; }
-    .lang-select { background: #131c2e; color: #00e6b8; border: 1px solid #1e2d4a; border-radius: 8px; padding: 4px 8px; font-size: 12px; font-weight: bold; outline: none; }
-
-    .balance-container { text-align: center; margin-top: 6px; margin-bottom: 16px; }
-    .balance-val { font-size: 42px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; }
-    .token-icon { width: 32px; height: 32px; background: #00b49d; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
-    
-    .btn-withdraw { background: #0088cc; color: #fff; border: none; width: 100%; padding: 12px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; }
-    
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .stat-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .stat-title { font-size: 11px; color: #8a99ad; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
-    .stat-val { font-size: 15px; font-weight: 700; }
-    .stat-icon { width: 32px; height: 32px; background: #1a273e; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #0088cc; }
-
-    .level-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 14px; padding: 12px; margin-bottom: 16px; }
-    .level-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: #8a99ad; }
-    
-    .progress-bar { background: #1a273e; height: 6px; border-radius: 3px; overflow: hidden; }
-    .progress-fill { background: #00e6b8; height: 100%; width: 0%; }
-
-    .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .ad-card { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
-    .ad-top { display: flex; align-items: center; justify-content: space-between; }
-    .ad-brand { display: flex; align-items: center; gap: 12px; }
-    .ad-logo { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
-    .logo-adsgram { background: linear-gradient(135deg, #ff007a, #7928ca); }
-    .logo-monetag { background: #ffffff; color: #000; font-size: 10px; font-weight: bold; }
-    
-    .ad-details { flex: 1; }
-    .ad-name { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-    .badge-yield { background: #3d3215; color: #ffcc00; font-size: 10px; padding: 2px 6px; border-radius: 8px; }
-    .ad-desc { font-size: 11px; color: #8a99ad; margin-top: 2px; }
-    .ad-rate { font-size: 12px; color: #00e6b8; font-weight: 700; margin-top: 4px; }
-    
-    .btn-watch { background: #0088cc; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
-    .btn-watch:disabled { background: #2a394a; color: #64748b; cursor: not-allowed; }
-
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-    .modal-content { background: #131c2e; border: 1px solid #1e2d4a; border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; text-align: center; }
-    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-    .modal-subtitle { font-size: 11px; color: #00e6b8; margin-bottom: 12px; font-weight: 600; }
-    .modal-input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #1e2d4a; background: #0b101d; color: #fff; margin-bottom: 12px; font-size: 14px; outline: none; }
-    .modal-btns { display: flex; gap: 8px; }
-    .modal-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
-    .btn-confirm { background: #00b49d; color: #fff; }
-    .btn-cancel { background: #1a273e; color: #8a99ad; }
-
-    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0d1424; border-top: 1px solid #1e2d4a; display: flex; justify-content: space-around; padding: 8px 0; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 10px; gap: 4px; }
-    .nav-item.active { color: #0088cc; }
-    .paidz-btn { width: 44px; height: 44px; background: #0088cc; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; margin-top: -15px; border: 3px solid #0b101d; box-shadow: 0 0 10px rgba(0,136,204,0.5); }
-  </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script type="module" crossorigin src="/assets/index-Dk0Ox2jY.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-mO0Drn7S.css">
 </head>
-<body>
 
-  <div class="header-bar">
-    <div class="user-info"><span id="txt-user-id">ID Người xem</span>: <span id="display-user-id" style="color:#00e6b8; font-weight:bold;">Loading...</span></div>
-    <select class="lang-select" id="lang-select" onchange="changeLanguage(this.value)">
-      <option value="vi">🌐 Tiếng Việt</option>
-      <option value="en">🌐 English</option>
-      <option value="ph">🌐 Tagalog (PH)</option>
-      <option value="ru">🌐 Русский</option>
-    </select>
-  </div>
+<body class="min-h-screen flex justify-center selection:bg-amber-500/30">
 
-  <div class="balance-container">
-    <div class="balance-val"><span id="user-balance">0.0000</span> <div class="token-icon">💎</div></div>
-  </div>
-
-  <button class="btn-withdraw" id="btn-withdraw" onclick="openWithdrawModal()">⇄ Rút về USDT (BEP20)</button>
-
-  <div class="modal" id="withdrawModal">
-    <div class="modal-content">
-      <div class="modal-title" id="txt-withdraw-title">Rút USDT (BEP20)</div>
-      <div class="modal-subtitle" id="txt-withdraw-min">Tối thiểu: 0.5 USDT</div>
-      <p style="font-size: 12px; color: #8a99ad; margin-bottom: 8px; text-align: left;" id="txt-enter-wallet">Nhập địa chỉ ví USDT (BEP20):</p>
-      <input type="text" class="modal-input" id="usdtWallet" placeholder="0x...">
-      <div class="modal-btns">
-        <button class="modal-btn btn-cancel" id="btn-cancel" onclick="closeWithdrawModal()">Hủy</button>
-        <button class="modal-btn btn-confirm" id="btn-confirm" onclick="submitWithdraw()">Gửi Yêu Cầu</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div>
-        <div class="stat-title" id="txt-stat-views">ĐÃ XEM</div>
-        <div class="stat-val"><span id="weekly-views">0</span> <span id="txt-unit-views">Lượt xem</span></div>
-      </div>
-      <div class="stat-icon">📺</div>
-    </div>
-    <div class="stat-card">
-      <div>
-        <div class="stat-title" id="txt-stat-speed">TĂNG TỐC</div>
-        <div class="stat-val" style="color:#00e6b8" id="txt-speed-val">1.00x Cơ bản</div>
-      </div>
-      <div class="stat-icon" style="color:#00e6b8">🔥</div>
-    </div>
-  </div>
-
-  <div class="level-card">
-    <div class="level-header">
-      <span id="txt-level-progress">Tiến trình cấp độ</span>
-      <span><span id="level-views">0</span> / 50 <span id="txt-unit-views2">lượt xem</span></span>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" id="level-progress"></div></div>
-  </div>
-
-  <div class="section-title" id="txt-network-title">📚 Mạng Quảng Cáo</div>
-
-  <!-- Adsgram -->
-  <div class="ad-card">
-    <div class="ad-top">
-      <div class="ad-brand">
-        <div class="ad-logo logo-adsgram">A</div>
-        <div class="ad-details">
-          <div class="ad-name">Adsgram <span class="badge-yield">Top Yield</span></div>
-          <div class="ad-desc" id="txt-adsgram-desc">Xem đủ thời gian video để nhận thưởng</div>
-          <div class="ad-rate">+0.0006 💎 / view</div>
+    <div id="initial-loader">
+        <div class="loader-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
         </div>
-      </div>
-      <button class="btn-watch" id="btn-watch-adsgram" onclick="watchAdsgramAd()">► Xem</button>
-    </div>
-  </div>
-
-  <!-- Monetag (Rewarded Popup) -->
-  <div class="ad-card">
-    <div class="ad-top">
-      <div class="ad-brand">
-        <div class="ad-logo logo-monetag">monetag</div>
-        <div class="ad-details">
-          <div class="ad-name">Monetag</div>
-          <div class="ad-desc" id="txt-monetag-desc">Truy cập trang ưu đãi để nhận thưởng (Hồi 5 phút)</div>
-          <div class="ad-rate">+0.0004 💎 / view</div>
+        <h1 class="loader-title">Nhà Máy In Giấy</h1>
+        
+        <div class="progress-container">
+            <div id="loading-bar" class="progress-bar"></div>
         </div>
-      </div>
-      <button class="btn-watch" id="btn-monetag" onclick="watchMonetagAd()">► Xem</button>
+        <div id="loading-text" class="progress-text">Đang chuẩn bị máy móc... 0%</div>
     </div>
-  </div>
 
-  <div class="nav-bar">
-    <div class="nav-item"><div class="nav-icon">📊</div><span id="nav-task">Nhiệm Vụ</span></div>
-    <div class="nav-item"><div class="nav-icon">👥</div><span id="nav-friends">Bạn Bè</span></div>
-    <div class="nav-item active"><div class="paidz-btn">P</div>PaidZ</div>
-    <div class="nav-item"><div class="nav-icon">🏆</div><span id="nav-contest">Cuộc Thi</span></div>
-    <div class="nav-item"><div class="nav-icon">👤</div><span id="nav-profile">Cá Nhân</span></div>
-  </div>
+    <div id="app-content" class="w-full max-w-md flex-col h-screen relative shadow-2xl overflow-hidden">
+        
+        <header class="px-5 py-3 wood-header flex justify-between items-center z-10 sticky top-0">
+            <div class="flex items-center">
+                <div class="relative">
+                    <img id="header-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-amber-200 shadow-md hidden">
+                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-amber-700 rounded-full"></div>
+                </div>
+            </div>
 
-  <script>
-    // --- 1. DỊCH ĐA NGÔN NGỮ ---
-    const i18n = {
-      vi: {
-        userId: "ID Người xem", withdrawBtn: "⇄ Rút về USDT (BEP20)", withdrawTitle: "Rút USDT (BEP20)", withdrawMin: "Tối thiểu: 0.5 USDT", enterWallet: "Nhập địa chỉ ví USDT (BEP20):", cancel: "Hủy", confirm: "Gửi Yêu Cầu", statViews: "ĐÃ XEM", unitViews: "Lượt xem", statSpeed: "TĂNG TỐC", speedVal: "1.00x Cơ bản", levelProgress: "Tiến trình cấp độ", networkTitle: "📚 Mạng Quảng Cáo", adsgramDesc: "Xem đủ thời gian video để nhận thưởng", monetagDesc: "Truy cập trang ưu đãi để nhận thưởng (Hồi 5 phút)", watchBtn: "► Xem", loadingBtn: "► Đang tải...", navTask: "Nhiệm Vụ", navFriends: "Bạn Bè", navContest: "Cuộc Thi", navProfile: "Cá Nhân",
-        minWithdrawErr: "Số dư chưa đủ! Cần tối thiểu 0.5 USDT (BEP20).", inputWalletErr: "Vui lòng nhập địa chỉ ví USDT!", withdrawSuccess: "Đã gửi yêu cầu rút tiền thành công!",
-        adFailErr: "Không thể mở quảng cáo. Vui lòng kiểm tra kết nối mạng!"
-      },
-      en: {
-        userId: "Viewer ID", withdrawBtn: "⇄ Withdraw USDT (BEP20)", withdrawTitle: "Withdraw USDT (BEP20)", withdrawMin: "Minimum: 0.5 USDT", enterWallet: "Enter USDT Address (BEP20):", cancel: "Cancel", confirm: "Submit Request", statViews: "WATCHED", unitViews: "Views", statSpeed: "BOOST", speedVal: "1.00x Base", levelProgress: "Level Progress", networkTitle: "📚 Ad Networks", adsgramDesc: "Watch full video to get rewarded", monetagDesc: "Visit offer page to get rewarded (5m cooldown)", watchBtn: "► Watch", loadingBtn: "► Loading...", navTask: "Tasks", navFriends: "Friends", navContest: "Contest", navProfile: "Profile",
-        minWithdrawErr: "Insufficient balance! Minimum 0.5 USDT required.", inputWalletErr: "Please enter your USDT wallet address!", withdrawSuccess: "Withdrawal request submitted successfully!",
-        adFailErr: "Failed to open ad. Please check your network connection!"
-      },
-      ph: {
-        userId: "ID ng Manonood", withdrawBtn: "⇄ Mag-withdraw sa USDT (BEP20)", withdrawTitle: "Mag-withdraw ng USDT (BEP20)", withdrawMin: "Minimum: 0.5 USDT", enterWallet: "Ilagay ang USDT Address (BEP20):", cancel: "Kanselahin", confirm: "Ipadala ang Hiling", statViews: "NANOOD NA", unitViews: "Mga Panonood", statSpeed: "PABILIS", speedVal: "1.00x Base", levelProgress: "Progresyon ng Antas", networkTitle: "📚 Mga Network ng Ad", adsgramDesc: "Panoorin ang buong video para makakuha ng reward", monetagDesc: "Bisitahin ang offer page para sa reward (5m cooldown)", watchBtn: "► Manood", loadingBtn: "► Naglo-load...", navTask: "Mga Gawain", navFriends: "Mga Kaibigan", navContest: "Paligsahan", navProfile: "Profile",
-        minWithdrawErr: "Kulang ang balanse! Kailangan ng minimum na 0.5 USDT.", inputWalletErr: "Mangyaring ilagay ang iyong USDT wallet address!", withdrawSuccess: "Matagumpay na naisumite ang kahilingan sa pag-withdraw!",
-        adFailErr: "Bigo na buksan ang ad. Mangyaring kiểm tra kết nối mạng!"
-      },
-      ru: {
-        userId: "ID Зрителя", withdrawBtn: "⇄ Вывести USDT (BEP20)", withdrawTitle: "Вывод USDT (BEP20)", withdrawMin: "Минимум: 0.5 USDT", enterWallet: "Введите адрес USDT (BEP20):", cancel: "Отмена", confirm: "Отправить запрос", statViews: "ПРОСМОТРЕНО", unitViews: "Просмотры", statSpeed: "УСКОРЕНИЕ", speedVal: "1.00x Базовый", levelProgress: "Прогресс уровня", networkTitle: "📚 Рекламные сети", adsgramDesc: "Посмотрите видео полностью для получения награды", monetagDesc: "Перейдите на страницу предложения (Кулдаун 5м)", watchBtn: "► Смотреть", loadingBtn: "► Загрузка...", navTask: "Задания", navFriends: "Друзья", navContest: "Конкурс", navProfile: "Профиль",
-        minWithdrawErr: "Недостаточно средств! Требуется минимум 0.5 USDT.", inputWalletErr: "Пожалуйста, введите адрес вашего USDT кошелька!", withdrawSuccess: "Запрос на вывод успешно отправлен!",
-        adFailErr: "Не удалось открыть рекламу. Проверьте подключение к сети!"
-      }
-    };
+            <div class="flex items-center gap-3">
+                <button id="btn-leaderboard" class="p-1.5 bg-amber-500/20 text-amber-100 rounded-full border border-amber-400/50 hover:bg-amber-500/40 transition-colors shadow-inner">
+                    <i data-lucide="trophy" class="w-4 h-4"></i>
+                </button>
 
-    let currentLang = localStorage.getItem('app_lang') || 'vi';
+                <div class="flex gap-3 bg-amber-900/50 px-3 py-1.5 rounded-full border border-amber-800 shadow-inner">
+                   <div class="flex items-center gap-1.5">
+                     <i data-lucide="file-text" class="text-white w-3.5 h-3.5 drop-shadow"></i>
+                     <span class="val-banknotes font-mono font-bold text-white text-xs tabular-nums">0</span>
+                   </div>
+                   <div class="w-[1px] h-4 bg-amber-700"></div>
+                   <div class="flex items-center gap-1.5">
+                     <i data-lucide="settings" class="text-amber-400 w-3.5 h-3.5"></i>
+                     <span class="val-gold font-mono font-bold text-amber-50 text-xs tabular-nums">0</span>
+                   </div>
+                </div>
+            </div>
+        </header>
 
-    function changeLanguage(lang) {
-      currentLang = lang;
-      localStorage.setItem('app_lang', lang);
-      document.getElementById('lang-select').value = lang;
-      
-      const t = i18n[lang];
-      document.getElementById('txt-user-id').innerText = t.userId;
-      document.getElementById('btn-withdraw').innerText = t.withdrawBtn;
-      document.getElementById('txt-withdraw-title').innerText = t.withdrawTitle;
-      document.getElementById('txt-withdraw-min').innerText = t.withdrawMin;
-      document.getElementById('txt-enter-wallet').innerText = t.enterWallet;
-      document.getElementById('btn-cancel').innerText = t.cancel;
-      document.getElementById('btn-confirm').innerText = t.confirm;
-      document.getElementById('txt-stat-views').innerText = t.statViews;
-      document.getElementById('txt-unit-views').innerText = t.unitViews;
-      document.getElementById('txt-unit-views2').innerText = t.unitViews.toLowerCase();
-      document.getElementById('txt-stat-speed').innerText = t.statSpeed;
-      document.getElementById('txt-speed-val').innerText = t.speedVal;
-      document.getElementById('txt-level-progress').innerText = t.levelProgress;
-      document.getElementById('txt-network-title').innerText = t.networkTitle;
-      document.getElementById('txt-adsgram-desc').innerText = t.adsgramDesc;
-      document.getElementById('txt-monetag-desc').innerText = t.monetagDesc;
-      document.getElementById('btn-watch-adsgram').innerText = t.watchBtn;
-      
-      let monetagBtn = document.getElementById('btn-monetag');
-      if (!monetagBtn.disabled) {
-        monetagBtn.innerText = t.watchBtn;
-      }
+        <main class="flex-1 overflow-y-auto scrollbar-hide relative" style="background-image: url('image_1c9aa5.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+            <div class="absolute inset-0 bg-white/70 backdrop-blur-sm z-0"></div>
+            
+            <div id="tab-home" class="tab-content relative z-10 flex flex-col items-center p-4 space-y-6 animate-fade-in pb-24">
+                
+                <div class="w-full wood-panel p-4 flex justify-between items-center">
+                  <div>
+                    <p class="text-amber-100 text-[10px] font-bold uppercase mb-1 flex items-center gap-1">
+                        <i data-lucide="zap" class="w-3 h-3"></i> Năng suất
+                    </p>
+                    <p class="text-white font-black text-lg tabular-nums flex items-center gap-1.5">
+                        <span id="val-speed">0</span>
+                        <i data-lucide="file-text" class="text-white w-4 h-4 opacity-80"></i>
+                        <span class="text-[10px] text-amber-200 font-normal uppercase mt-1">/ giờ</span>
+                    </p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-amber-100 text-[10px] font-bold uppercase mb-1 flex items-center justify-end gap-1">
+                        <i data-lucide="shield-check" class="w-3 h-3"></i> Cấp máy in
+                    </p>
+                    <p class="text-white font-black text-lg">LV <span id="val-level">1</span></p>
+                  </div>
+                </div>
+          
+                <div class="text-center py-2 bg-white/80 rounded-2xl px-6 border-2 border-amber-200 shadow-sm backdrop-blur-md">
+                  <h2 class="text-amber-800 text-xs uppercase font-bold mb-1">Kho Giấy Trắng</h2>
+                  <div class="val-banknotes text-4xl font-black text-amber-600 font-mono tracking-tight tabular-nums drop-shadow-sm">0</div>
+                </div>
+          
+                <div id="printer-machine" class="relative w-72 h-64 flex flex-col items-center justify-center my-2 transition-transform">
+                  
+                  <div class="relative z-10 w-full h-full flex flex-col items-center justify-end">
+                    
+                    <div class="absolute top-4 w-40 h-24 bg-gray-200 rounded-full border-4 border-gray-400 shadow-inner flex items-center justify-center overflow-hidden z-0">
+                        <div class="w-full h-2 bg-gray-300 opacity-50 my-1"></div>
+                        <div class="w-4 h-4 bg-gray-500 rounded-full absolute"></div>
+                    </div>
 
-      document.getElementById('nav-task').innerText = t.navTask;
-      document.getElementById('nav-friends').innerText = t.navFriends;
-      document.getElementById('nav-contest').innerText = t.navContest;
-      document.getElementById('nav-profile').innerText = t.navProfile;
-    }
+                    <div class="relative z-10 w-56 h-32 bg-amber-500 rounded-t-2xl border-4 border-amber-700 shadow-lg flex flex-col items-center p-2">
+                        
+                        <div class="w-32 h-10 bg-gray-900 rounded-lg border-2 border-gray-600 flex items-center justify-center relative overflow-hidden mb-2 shadow-inner">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+                            <span id="printer-status-on" class="hidden text-green-400 text-xs font-mono font-bold flex items-center gap-1.5">
+                                <i data-lucide="power" class="w-3 h-3 animate-pulse"></i> ĐANG CHẠY: <span id="val-timer">00:00:00</span>
+                            </span>
+                            <span id="printer-status-off" class="text-red-400 text-xs font-mono font-bold flex items-center gap-1.5">
+                                <i data-lucide="power-off" class="w-3 h-3"></i> TẠM DỪNG
+                            </span>
+                        </div>
 
-    // --- 2. TELEGRAM USER ID ---
-    let tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-    let userId = "guest_user";
+                        <div class="absolute top-3 left-3 flex gap-1">
+                            <i data-lucide="settings" class="text-amber-800 w-5 h-5 gear-icon"></i>
+                        </div>
+                        <div class="absolute top-3 right-3 flex gap-1">
+                            <i data-lucide="settings" class="text-amber-800 w-5 h-5 gear-icon"></i>
+                        </div>
+
+                        <div class="w-48 h-8 bg-gray-400 rounded-full mt-auto border-2 border-gray-600 flex items-center justify-evenly shadow-inner overflow-hidden">
+                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
+                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
+                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
+                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
+                            <div class="roller-line w-2 h-full bg-gray-500/50"></div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-20 w-48 h-12 bg-amber-700 border-x-4 border-b-4 border-amber-900 rounded-b-xl flex justify-center perspective-1000 overflow-hidden shadow-xl">
+                        <div id="money-particles" class="hidden absolute top-0 w-full h-full flex justify-center">
+                            <div class="paper-sheet absolute top-0 w-20 h-10 bg-white rounded border border-gray-300 shadow-md"></div>
+                            <div class="paper-sheet absolute top-0 w-20 h-10 bg-white rounded border border-gray-300 shadow-md" style="animation-delay: 0.4s"></div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <button onclick="xemQuangCao()" class="mt-4 w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-3 rounded-xl border-b-4 border-amber-700 active:border-b-0 active:translate-y-1 transition-all shadow-lg flex items-center justify-center gap-2">
+                    <i data-lucide="play-circle" class="w-5 h-5"></i>
+                    XEM QUẢNG CÁO (Thưởng Giấy)
+                </button>
+            </div>
+        </main>
+        
+        <nav class="flex absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 z-20 shadow-lg">
+            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-amber-600" data-target="tab-home">
+                <div class="p-2 bg-amber-100 rounded-full mb-1 nav-icon-bg">
+                    <i data-lucide="home" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
+                </div>
+                <span class="text-[9px] font-black tracking-wide uppercase">Nhà Máy</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-gray-400 hover:text-amber-500" data-target="tab-exchange">
+                <div class="p-2 rounded-full mb-1 nav-icon-bg transition-colors">
+                    <i data-lucide="refresh-cw" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
+                </div>
+                <span class="text-[9px] font-black tracking-wide uppercase">Tái Chế</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-gray-400 hover:text-amber-500" data-target="tab-tasks">
+                <div class="p-2 rounded-full mb-1 nav-icon-bg transition-colors">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
+                </div>
+                <span class="text-[9px] font-black tracking-wide uppercase">Công Việc</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-gray-400 hover:text-amber-500" data-target="tab-referral">
+                <div class="p-2 rounded-full mb-1 nav-icon-bg transition-colors">
+                    <i data-lucide="users" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
+                </div>
+                <span class="text-[9px] font-black tracking-wide uppercase">Tuyển Dụng</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center justify-center p-2 space-y-1 w-1/5 transition-colors text-gray-400 hover:text-amber-500" data-target="tab-withdraw">
+                <div class="p-2 rounded-full mb-1 nav-icon-bg transition-colors">
+                    <i data-lucide="truck" class="w-5 h-5 nav-icon stroke-[2.5]"></i>
+                </div>
+                <span class="text-[9px] font-black tracking-wide uppercase">Xuất Xưởng</span>
+            </button>
+        </nav>
+        
+        <div id="leaderboard-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div class="modal-overlay absolute inset-0" id="leaderboard-backdrop"></div>
+            
+            <div class="relative bg-amber-50 border-4 border-amber-600 rounded-3xl w-full max-w-sm overflow-hidden flex flex-col max-h-[85vh] shadow-2xl animate-fade-in">
+                <div class="p-4 border-b-4 border-amber-600 flex justify-between items-center wood-header z-10">
+                    <h2 class="text-lg font-black text-amber-50 flex items-center gap-2">
+                        <i data-lucide="award" class="text-yellow-300 w-6 h-6"></i> BẢNG VINH DANH
+                    </h2>
+                    <button id="btn-close-leaderboard" class="text-amber-200 hover:text-white p-1 bg-amber-800 rounded-full">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide bg-amber-50" id="leaderboard-list"></div>
+
+                <div class="bg-amber-100 border-t-4 border-amber-300 p-4 flex items-center justify-between sticky bottom-0 z-10">
+                    <div class="flex items-center gap-3">
+                        <img id="lb-me-avatar" src="" alt="Avatar" class="w-12 h-12 rounded-full border-4 border-amber-400 hidden shadow-md">
+                        <div>
+                            <p id="lb-me-name" class="text-amber-900 font-black text-sm">Đang tải...</p>
+                            <p class="text-amber-700 text-xs font-bold">LV <span id="lb-me-level" class="text-amber-600">0</span></p>
+                        </div>
+                    </div>
+                    <div class="text-right bg-white px-3 py-1.5 rounded-xl border-2 border-amber-200 shadow-sm">
+                        <p class="text-[10px] text-amber-500 uppercase font-bold">Thứ hạng</p>
+                        <p id="lb-my-rank" class="text-xl font-black text-amber-600 tabular-nums">---</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
-    if (tg) {
-      tg.ready();
-      tg.expand();
-      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        userId = tg.initDataUnsafe.user.id.toString();
-      }
-    }
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='11673272' data-sdk='show_11673272'></script>
     
-    document.getElementById('display-user-id').innerText = userId;
+    <script>
+        function xemQuangCao() {
+            let userId = "guest_user";
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
+                userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+            }
 
-    let currentBalance = parseFloat(localStorage.getItem(`balance_${userId}`) || "0.0000");
-    let currentViews = parseInt(localStorage.getItem(`views_${userId}`) || "0");
-    let isAdShowing = false;
-    const MONETAG_COOLDOWN_MS = 5 * 60 * 1000; // 5 phút cooldown
-
-    window.addEventListener('load', () => {
-      changeLanguage(currentLang);
-      updateUI();
-      checkMonetagCooldown();
-    });
-
-    // --- 3. LOGIC MONETAG REWARDED POPUP (TỐI ƯU THEO DOCS) ---
-    function checkMonetagCooldown() {
-      let lastTime = localStorage.getItem(`monetag_cd_${userId}`);
-      if (lastTime) {
-        let diff = Date.now() - parseInt(lastTime);
-        let remaining = MONETAG_COOLDOWN_MS - diff;
-        if (remaining > 0) {
-          startMonetagTimer(remaining);
+            if (typeof show_11673272 === 'function') {
+                show_11673272({ type: 'pop', ymid: userId })
+                    .then(() => {
+                        console.log("Xem quảng cáo thành công!");
+                        if (window.Telegram.WebApp.HapticFeedback) {
+                            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                        }
+                        alert("Tuyệt vời! Bạn đã nhận được thưởng.");
+                    })
+                    .catch((err) => {
+                        console.error("Chưa thể mở quảng cáo:", err);
+                        if (window.Telegram.WebApp.HapticFeedback) {
+                            window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+                        }
+                    });
+            } else {
+                alert("Hệ thống quảng cáo đang kết nối, vui lòng bấm lại sau ít giây!");
+            }
         }
-      }
-    }
-
-    function startMonetagTimer(durationMs) {
-      let btn = document.getElementById('btn-monetag');
-      btn.disabled = true;
-      let endTime = Date.now() + durationMs;
-
-      let timer = setInterval(() => {
-        let left = Math.ceil((endTime - Date.now()) / 1000);
-        if (left <= 0) {
-          clearInterval(timer);
-          btn.disabled = false;
-          btn.innerText = i18n[currentLang].watchBtn;
-          localStorage.removeItem(`monetag_cd_${userId}`);
-        } else {
-          let m = Math.floor(left / 60);
-          let s = left % 60;
-          btn.innerText = `⏳ ${m}:${s < 10 ? '0' : ''}${s}`;
-        }
-      }, 1000);
-    }
-
-    function watchMonetagAd() {
-      if (isAdShowing) return;
-
-      let btn = document.getElementById('btn-monetag');
-      btn.disabled = true;
-      isAdShowing = true;
-
-      // Kiểm tra SDK đã sẵn sàng chưa
-      if (typeof show_11664284 === 'function') {
-        // Cú pháp chính thức: show_XXX({ type: 'pop', ymid: userId })
-        show_11664284({ type: 'pop', ymid: userId }).then(() => {
-          isAdShowing = false;
-
-          // Theo tài liệu Monetag: .then() xác nhận trang quảng cáo popup đã được mở thành công
-          congThuong(0.0004);
-
-          // Kích hoạt hồi chiêu 5 phút
-          localStorage.setItem(`monetag_cd_${userId}`, Date.now().toString());
-          startMonetagTimer(MONETAG_COOLDOWN_MS);
-
-        }).catch((err) => {
-          isAdShowing = false;
-          btn.disabled = false;
-          btn.innerText = i18n[currentLang].watchBtn;
-          console.log('Monetag Popup Error:', err);
-          alert(i18n[currentLang].adFailErr);
-        });
-      } else {
-        isAdShowing = false;
-        btn.disabled = false;
-        btn.innerText = i18n[currentLang].watchBtn;
-        alert(i18n[currentLang].adFailErr);
-      }
-    }
-
-    // --- 4. LOGIC ADSGRAM ---
-    let adsgram = null;
-    function watchAdsgramAd() {
-      if (isAdShowing) return;
-      if (!adsgram && window.Adsgram) {
-        adsgram = window.Adsgram.init({ blockId: "42178" });
-      }
-      if (!adsgram) return;
-      
-      let startTime = Date.now();
-      isAdShowing = true;
-
-      adsgram.show().then(() => {
-        isAdShowing = false;
-        let duration = (Date.now() - startTime) / 1000;
-        if (duration >= 14.5) {
-          congThuong(0.0006);
-        }
-      }).catch((err) => {
-        isAdShowing = false;
-      });
-    }
-
-    function congThuong(amount) {
-      currentBalance += amount;
-      currentViews += 1;
-      localStorage.setItem(`balance_${userId}`, currentBalance.toFixed(4));
-      localStorage.setItem(`views_${userId}`, currentViews.toString());
-      updateUI();
-    }
-
-    function updateUI() {
-      document.getElementById('user-balance').innerText = currentBalance.toFixed(4);
-      document.getElementById('weekly-views').innerText = currentViews;
-      document.getElementById('level-views').innerText = currentViews;
-      document.getElementById('level-progress').style.width = Math.min((currentViews / 50) * 100, 100) + '%';
-    }
-
-    // --- 5. RÚT TIỀN ---
-    function openWithdrawModal() {
-      if (currentBalance < 0.5) {
-        alert(i18n[currentLang].minWithdrawErr);
-        return;
-      }
-      document.getElementById('withdrawModal').style.display = 'flex';
-    }
-
-    function closeWithdrawModal() {
-      document.getElementById('withdrawModal').style.display = 'none';
-    }
-
-    function submitWithdraw() {
-      let wallet = document.getElementById('usdtWallet').value.trim();
-      if (!wallet) {
-        alert(i18n[currentLang].inputWalletErr);
-        return;
-      }
-      let botToken = "8946115398:AAERZIkvF4cQpU-9d8xw97s4zFL0VvVMLTw";
-      let adminChatId = "7496441289";
-      let message = `🔔 *YÊU CẦU RÚT USDT*\nUser ID: ${userId}\nSố tiền: ${currentBalance.toFixed(4)} USDT\nVí: \`${wallet}\``;
-
-      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: adminChatId, text: message, parse_mode: "Markdown" })
-      });
-
-      currentBalance = 0;
-      localStorage.setItem(`balance_${userId}`, "0.0000");
-      updateUI();
-      closeWithdrawModal();
-      alert(i18n[currentLang].withdrawSuccess);
-    }
-  </script>
+    </script>
 </body>
 </html>
